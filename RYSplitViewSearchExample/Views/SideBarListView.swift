@@ -39,6 +39,13 @@ struct SideBarListView: View {
             .navigationSplitViewColumnWidth(min: 180, ideal: 200)
 #endif
         }
+        .toolbar {
+#if os(iOS)
+            ToolbarItem(placement: .navigationBarTrailing) {
+                EditButton()
+            }
+#endif
+        }
         .onChange(of: viewModel.searchedItem, initial: true) { (oldValue, newValue) in
             if newValue != nil  {
 #if !os(macOS)

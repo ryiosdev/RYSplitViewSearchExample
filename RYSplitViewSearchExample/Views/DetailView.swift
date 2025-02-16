@@ -16,24 +16,26 @@ struct DetailView: View {
         if let searched = viewModel.searchedItem {
             VStack {
 #if os(macOS)
-                Text("Search result item:")
-                Text(searched.name)
-                //if not already saved, show the Save button
-                if !viewModel.items.contains(where: { $0.name.lowercased() == searched.name.lowercased() } ) {
-                    Button("Save") {
-                        withAnimation {
-                            //TODO: move to viewModel
-                            viewModel.add(item: searched)
-                            viewModel.selectedItem = searched
-                            viewModel.searchText = ""
-                            viewModel.searchedItem = nil
-                            dismissSearch()
+                VStack {
+                    Text("Search result item:")
+                    Text(searched.name)
+                    //if not already saved, show the Save button
+                    if !viewModel.items.contains(where: { $0.name.lowercased() == searched.name.lowercased() } ) {
+                        Button("Save") {
+                            withAnimation {
+                                //TODO: move to viewModel
+                                viewModel.add(item: searched)
+                                viewModel.selectedItem = searched
+                                viewModel.searchText = ""
+                                viewModel.searchedItem = nil
+                                dismissSearch()
+                            }
                         }
                     }
                 }
+                .navigationTitle(searched.name)
 #endif
             }
-            .navigationTitle(searched.name)
         } else if let selectedItem = viewModel.selectedItem {
             VStack {
                 Text("Selected item:")
@@ -42,7 +44,7 @@ struct DetailView: View {
             .navigationTitle(selectedItem.name)
         } else {
             Text("Select or Search for an item")
-            
+                .navigationBarBackButtonHidden(false)
         }
     }
 }

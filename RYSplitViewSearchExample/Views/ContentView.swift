@@ -22,14 +22,9 @@ struct ContentView: View {
         } detail: {
             DetailView(viewModel: $viewModel)
         }
-        .toolbar {
-#if os(iOS)
-            ToolbarItem(placement: .navigationBarTrailing) {
-                EditButton()
-            }
-#endif
-        }
-        .searchable(text: $viewModel.searchText, isPresented: $viewModel.isSearchPresented)
+        .searchable(text: $viewModel.searchText,
+                    isPresented: $viewModel.isSearchPresented,
+                    placement: .navigationBarDrawer(displayMode:.always))
         .searchSuggestions {
             SearchSuggestionsView(viewModel: viewModel)
         }
@@ -51,9 +46,9 @@ struct ContentView: View {
 #if os(macOS)
                 //deselect the macOS side bar is
                 viewModel.selectedItem = nil
-                viewModel.isSearchPresented = false
 #endif
             }
         }
+        viewModel.isSearchPresented = false
     }
 }
