@@ -1,5 +1,5 @@
 //
-//  SideBarView.swift
+//  SideBarListView.swift
 //  test
 //
 //  Created by Ryan Young on 2/15/25.
@@ -8,7 +8,7 @@
 import SwiftUI
 import SwiftData
 
-struct SideBarView: View {
+struct SideBarListView: View {
     @Binding var selection: Item?
     @Binding var searchedItem: Item?
     
@@ -18,7 +18,7 @@ struct SideBarView: View {
     @State private var isDetailSheetPresented = false
 
     var body: some View {
-        NavigationStack {
+        VStack {
             List(items, id: \.name, selection: $selection) { item in
                 // HACK .onDelete (swipe to delete) seems to only works on ForEach
                 ForEach([item]) { item in

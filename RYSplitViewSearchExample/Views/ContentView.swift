@@ -12,12 +12,37 @@ struct ContentView: View {
     @Environment(\.modelContext) private var modelContext
     @Query private var items: [Item]
     
+    @State private var selection: Item?
+    
+    @State private var searchText: String = ""
+    @State private var isSearchPresented = false
+    var searchItems = [Item(name: "Apple"),
+                       Item(name: "Banana"),
+                       Item(name: "Orange"),
+                       Item(name: "Mango"),
+                       Item(name: "Grape"),
+                       Item(name: "Watermelon"),
+                       Item(name: "Pineapple"),
+                       Item(name: "Strawberry"),
+                       Item(name: "Blueberry"),
+                       Item(name: "Raspberry"),
+                       Item(name: "Avocado"),
+                       Item(name: "Lemon"),
+                       Item(name: "Lime"),
+                       Item(name: "Cherry"),
+                       Item(name: "Kiwi"),
+                       Item(name: "Coconut"),
+                       Item(name: "Peach"),
+                       Item(name: "Pear"),
+                       Item(name: "Papaya"),
+                       Item(name: "Plum")]
+    @State private var searchedItem: Item?
+
     var body: some View {
+        
+        
         NavigationSplitView {
-            SideBarView(selection: $selection, searchedItem: $searchedItem)
-            //                .onChange(of: selection) { _,_ in
-            //                    searchText = ""
-            //                }
+            SideBarListView(selection: $selection, searchedItem: $searchedItem)
         } detail: {
             DetailView(selection: $selection, searchedItem: $searchedItem)
         }
@@ -34,7 +59,6 @@ struct ContentView: View {
                 //deselect the macOS side bar is
                 selection = nil
 #endif
-                
             }
         }
     }
@@ -52,9 +76,7 @@ struct ContentView: View {
 //                }
 //                .onDelete(perform: deleteItems)
 //            }
-//#if os(macOS)
-//            .navigationSplitViewColumnWidth(min: 180, ideal: 200)
-//#endif
+
 //            .toolbar {
 //#if os(iOS)
 //                ToolbarItem(placement: .navigationBarTrailing) {

@@ -6,16 +6,26 @@
 //
 
 import SwiftUI
+import SwiftData
 
 struct SearchSuggestionsView: View {
     @Binding var searchText: String
     var searchItems: [Item]
 
+    @Query private var items: [Item]
+
     var body: some View {
-        //TODO: filter out currently selected
-        ForEach(searchItems.filter({ $0.name.lowercased().contains(searchText.lowercased()) })) { newItem in
+        ForEach(searchResults()) { newItem in
             Text(newItem.name)
             .searchCompletion(newItem.name)
         }
+    }
+    
+    func searchResults() -> [Item] {
+        let results = searchItems.filter {
+            $0.name.lowercased().contains(searchText.lowercased())
+        }
+        
+        return results.filter { !items.contains($0) }
     }
 }

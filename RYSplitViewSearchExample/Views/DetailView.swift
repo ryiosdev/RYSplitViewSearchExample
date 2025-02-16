@@ -33,6 +33,7 @@ struct DetailView: View {
                 }
 #endif
             }
+            .navigationTitle(searched.name)
         } else if let selectedItem = selection {
             VStack {
                 Text("Selected item:")

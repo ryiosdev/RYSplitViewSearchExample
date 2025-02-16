@@ -11,13 +11,22 @@ import SwiftData
 @main
 struct RYSplitViewSearchExampleApp: App {
     var sharedModelContainer: ModelContainer = {
+        
+//        let urlApp = FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask).last
+//        let url = urlApp!.appendingPathComponent("default.store")
+//        if FileManager.default.fileExists(atPath: url.path) {
+//            print("swiftdata db at \(url.absoluteString)")
+//        }
+        
         let schema = Schema([
             Item.self,
         ])
         let modelConfiguration = ModelConfiguration(schema: schema, isStoredInMemoryOnly: false)
 
         do {
-            return try ModelContainer(for: schema, configurations: [modelConfiguration])
+            let container = try ModelContainer(for: schema, configurations: [modelConfiguration])
+//            try container.erase()
+            return container
         } catch {
             fatalError("Could not create ModelContainer: \(error)")
         }
