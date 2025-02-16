@@ -8,6 +8,12 @@
 * MVVM architecture
 * iOS, iPadOS, and macOS support
 
+### Requires
+* Xcode 16.2
+* min deployment target
+  * iOS 18.2
+  * macOS 15.0 
+
 ### Credits
 built from sample code derived from:
 * https://www.swiftyplace.com/blog/swiftui-search-bar-best-practices-and-examples
