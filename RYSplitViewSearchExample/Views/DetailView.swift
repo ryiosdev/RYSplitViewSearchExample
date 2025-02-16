@@ -9,32 +9,32 @@ import SwiftUI
 import SwiftData
 
 struct DetailView: View {
-    @Binding var selection: Item?
-    @Binding var searchedItem: Item?
-    
-    @Environment(\.modelContext) private var modelContext
-    @Query private var items: [Item]
+    @Binding var viewModel: ViewModel
 
+    @Environment(\.dismissSearch) private var dismissSearch
     var body: some View {
-        if let searched = searchedItem {
+        if let searched = viewModel.searchedItem {
             VStack {
 #if os(macOS)
                 Text("Search result item:")
                 Text(searched.name)
                 //if not already saved, show the Save button
-                if !items.contains(where: { $0.name.lowercased() == searched.name.lowercased() } ) {
+                if !viewModel.items.contains(where: { $0.name.lowercased() == searched.name.lowercased() } ) {
                     Button("Save") {
                         withAnimation {
-                            modelContext.insert(searched)
-                            selection = searched
-                            searchedItem = nil
+                            //TODO: move to viewModel
+                            viewModel.add(item: searched)
+                            viewModel.selectedItem = searched
+                            viewModel.searchText = ""
+                            viewModel.searchedItem = nil
+                            dismissSearch()
                         }
                     }
                 }
 #endif
             }
             .navigationTitle(searched.name)
-        } else if let selectedItem = selection {
+        } else if let selectedItem = viewModel.selectedItem {
             VStack {
                 Text("Selected item:")
                 Text(selectedItem.name)

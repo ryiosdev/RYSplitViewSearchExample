@@ -9,17 +9,12 @@ import SwiftUI
 import SwiftData
 
 struct SideBarListView: View {
-    @Binding var selection: Item?
-    @Binding var searchedItem: Item?
-    
     @Environment(\.modelContext) private var modelContext
-    @Query private var items: [Item]
-
-    @State private var isDetailSheetPresented = false
-
+    @Binding var viewModel: ViewModel
+    
     var body: some View {
         VStack {
-            List(items, id: \.name, selection: $selection) { item in
+            List(viewModel.items, id: \.name, selection: $viewModel.selectedItem) { item in
                 // HACK .onDelete (swipe to delete) seems to only works on ForEach
                 ForEach([item]) { item in
                     NavigationLink(item.name, value: item)
@@ -29,11 +24,11 @@ struct SideBarListView: View {
                 // macOS right click delete
 #if os(macOS)
                 .contextMenu {
-                    if let item = selection {
+                    if let item = viewModel.selectedItem {
                         Button("Delete") {
                             withAnimation {
-                                modelContext.delete(item)
-                                selection = nil
+                                viewModel.delete(item: item)
+                                viewModel.selectedItem = nil
                             }
                         }
                     }
@@ -44,22 +39,19 @@ struct SideBarListView: View {
             .navigationSplitViewColumnWidth(min: 180, ideal: 200)
 #endif
         }
-        .onChange(of: searchedItem, initial: true) { (oldValue, newValue) in
+        .onChange(of: viewModel.searchedItem, initial: true) { (oldValue, newValue) in
             if newValue != nil  {
 #if !os(macOS)
-                isDetailSheetPresented = true
+                viewModel.isDetailSheetPresented = true
 #endif
             } else {
-                isDetailSheetPresented = false
+                viewModel.isDetailSheetPresented = false
             }
         }
-        //iOS,iPadOS
-        .sheet(isPresented: $isDetailSheetPresented) {
-            SheetDetailView(isPresented: $isDetailSheetPresented,
-                            selection: $selection,
-                            searchedItem: searchedItem)
+        .sheet(isPresented: $viewModel.isDetailSheetPresented) {
+            SheetDetailView(viewModel: $viewModel)
             .onDisappear {
-                searchedItem = nil
+                viewModel.searchedItem = nil
             }
         }
     }
@@ -67,10 +59,11 @@ struct SideBarListView: View {
     private func deleteItems(offsets: IndexSet) {
         withAnimation {
             for index in offsets {
-                modelContext.delete(items[index])
-                if selection == items[index] {
-                    selection = nil
+                let item = viewModel.items[index]
+                if item == viewModel.selectedItem {
+                    viewModel.selectedItem = nil
                 }
+                viewModel.delete(item: item)
             }
         }
     }

@@ -15,7 +15,7 @@ struct RYSplitViewSearchExampleApp: App {
 //        let urlApp = FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask).last
 //        let url = urlApp!.appendingPathComponent("default.store")
 //        if FileManager.default.fileExists(atPath: url.path) {
-//            print("swiftdata db at \(url.absoluteString)")
+//            print("macOS: delete the swiftData .store* files here if crash on launch: \(url.absoluteString)")
 //        }
         
         let schema = Schema([
@@ -25,16 +25,16 @@ struct RYSplitViewSearchExampleApp: App {
 
         do {
             let container = try ModelContainer(for: schema, configurations: [modelConfiguration])
-//            try container.erase()
             return container
         } catch {
+            //if you get here, on macOS delete the file in the commented code above, iOS delete app from simulator
             fatalError("Could not create ModelContainer: \(error)")
         }
     }()
 
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            ContentView(modelContext: sharedModelContainer.mainContext)
         }
         .modelContainer(sharedModelContainer)
     }

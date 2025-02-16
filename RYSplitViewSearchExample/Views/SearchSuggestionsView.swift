@@ -9,23 +9,13 @@ import SwiftUI
 import SwiftData
 
 struct SearchSuggestionsView: View {
-    @Binding var searchText: String
-    var searchItems: [Item]
-
-    @Query private var items: [Item]
+    var viewModel: ViewModel
 
     var body: some View {
-        ForEach(searchResults()) { newItem in
-            Text(newItem.name)
-            .searchCompletion(newItem.name)
+        print("suggesting: \(viewModel.searchItemsByName.map(\.name))")
+        return ForEach(viewModel.searchItemsByName) { item in
+            Text(item.name)
+            .searchCompletion(item.name)
         }
-    }
-    
-    func searchResults() -> [Item] {
-        let results = searchItems.filter {
-            $0.name.lowercased().contains(searchText.lowercased())
-        }
-        
-        return results.filter { !items.contains($0) }
     }
 }
