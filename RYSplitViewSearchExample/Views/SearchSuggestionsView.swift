@@ -12,8 +12,9 @@ struct SearchSuggestionsView: View {
     var viewModel: ViewModel
 
     var body: some View {
-        print("suggesting: \(viewModel.searchItemsByName.map(\.name))")
-        return ForEach(viewModel.searchItemsByName) { item in
+        let items = viewModel.searchedItemsByName
+        print("suggesting: \(items.map(\.name))")
+        return ForEach(items) { item in
             Text(item.name)
             .searchCompletion(item.name)
         }

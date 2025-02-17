@@ -26,37 +26,18 @@ struct ContentView: View {
         .searchable(text: $viewModel.searchText,
                     isPresented: $viewModel.isSearchPresented,
                     placement: .automatic )
-
 #else
         .searchable(text: $viewModel.searchText,
                     isPresented: $viewModel.isSearchPresented,
-                    .navigationBarDrawer(displayMode:.always))
+                    placement: .navigationBarDrawer(displayMode:.always))
 #endif
-
         .searchSuggestions {
             SearchSuggestionsView(viewModel: viewModel)
         }
         .onSubmit(of: .search) {
-            onSubmitSearch()
-        }
-    }
-    
-    //on submit (enter key), show the first searched suggestion, if it exist
-    private func onSubmitSearch() {
-        let searchText = viewModel.searchText
-        let searchResults = viewModel.searchItemsByName
-        print("onSearchSbumit '\(searchText)' returned : \(searchResults.map(\.name))")
-        
-        if let firstItem = searchResults.first {
             withAnimation {
-                viewModel.searchText = firstItem.name
-                viewModel.searchedItem = firstItem
-#if os(macOS)
-                //deselect the macOS side bar is
-                viewModel.selectedItem = nil
-#endif
+                viewModel.onSubmitOfSearch()
             }
         }
-        viewModel.isSearchPresented = false
-    }
+    }    
 }

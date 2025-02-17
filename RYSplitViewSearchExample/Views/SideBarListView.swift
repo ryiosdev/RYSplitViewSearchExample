@@ -14,7 +14,7 @@ struct SideBarListView: View {
     
     var body: some View {
         VStack {
-            List(viewModel.items, id: \.name, selection: $viewModel.selectedItem) { item in
+            List(viewModel.savedItems, id: \.name, selection: $viewModel.selectedItem) { item in
                 // HACK .onDelete (swipe to delete) seems to only works on ForEach
                 ForEach([item]) { item in
                     NavigationLink(item.name, value: item)
@@ -66,7 +66,7 @@ struct SideBarListView: View {
     private func deleteItems(offsets: IndexSet) {
         withAnimation {
             for index in offsets {
-                let item = viewModel.items[index]
+                let item = viewModel.savedItems[index]
                 if item == viewModel.selectedItem {
                     viewModel.selectedItem = nil
                 }

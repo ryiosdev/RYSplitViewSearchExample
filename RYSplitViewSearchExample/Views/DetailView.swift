@@ -20,7 +20,7 @@ struct DetailView: View {
                     Text("Search result item:")
                     Text(searched.name)
                     //if not already saved, show the Save button
-                    if !viewModel.items.contains(where: { $0.name.lowercased() == searched.name.lowercased() } ) {
+                    if !viewModel.savedItems.contains(where: { $0.name.lowercased() == searched.name.lowercased() } ) {
                         Button("Save") {
                             withAnimation {
                                 //TODO: move to viewModel

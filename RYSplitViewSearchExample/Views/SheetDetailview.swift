@@ -23,7 +23,7 @@ struct SheetDetailView: View {
                 .navigationTitle(searched.name)
                 .toolbar {
                     // TODO: move to viewModel function of which button to show..
-                    if !viewModel.items.contains(where: { $0.name.lowercased() == searched.name.lowercased() } ) {
+                    if !viewModel.savedItems.contains(where: { $0.name.lowercased() == searched.name.lowercased() } ) {
                         Button("Save") {
                             withAnimation {
                                 viewModel.add(item: searched)

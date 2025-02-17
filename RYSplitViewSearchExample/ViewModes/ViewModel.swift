@@ -12,15 +12,15 @@ import SwiftData
 @Observable @MainActor
 class ViewModel {
     // saved items in swiftData
-    var items = [Item]() // rename to savedItems
+    var savedItems = [Item]()
 
     // results from searching by name with searchText
-    var searchItemsByName: [Item] {
-        searchItems.filter { $0.name.lowercased().contains(searchText.lowercased()) }
+    var searchedItemsByName: [Item] {
+        searchableItems.filter { $0.name.lowercased().contains(searchText.lowercased()) }
     }
 
     //the list of searchables..
-    private var searchItems: [Item] {
+    private var searchableItems: [Item] {
         get {
             let names = ["Apple",
                          "Banana",
@@ -43,7 +43,6 @@ class ViewModel {
                          "Papaya",
                          "Plum",
                          "Apricot"]
-            
             return names.sorted().map { Item(name: $0) }
         }
     }
@@ -59,13 +58,13 @@ class ViewModel {
 
     init(modelContext: ModelContext) {
         self.modelContext = modelContext
-        fetchData()
+        fetchSavedData()
     }
     
-    private func fetchData() {
+    private func fetchSavedData() {
         do {
             let descriptor = FetchDescriptor<Item>(sortBy: [SortDescriptor(\.name)])
-            items = try modelContext.fetch(descriptor)
+            savedItems = try modelContext.fetch(descriptor)
         } catch {
             print("Fetch failed")
         }
@@ -73,15 +72,35 @@ class ViewModel {
     
     func add(item: Item) {
         modelContext.insert(item)
-        fetchData()
+        fetchSavedData()
     }
     
     func delete(item: Item) {
         modelContext.delete(item)
-        fetchData()
+        fetchSavedData()
     }
             
-    func onSubmit() {
-        
+    func onSubmitOfSearch() {
+        //on submit (enter key), show the first searched suggestion, if it exist
+        let items = searchedItemsByName
+        print("submitted search text '\(searchText)' returned : \(items.map(\.name))")
+        showSearchResult(items.first)
     }
+    
+    private func showSearchResult(_ item: Item?) {
+        guard let item else { return }
+        searchText = item.name // "auto-complete" search text
+        isSearchPresented = false
+        searchedItem = item
+#if os(macOS)
+        //deselect the macOS side bar if the searched item is ont already a saved item.
+        selectedItem = isSearchedItemAlreadySaved() ? selectedItem : nil
+#endif
+    }
+    
+    private func isSearchedItemAlreadySaved() -> Bool {
+        guard let searchedItem else { return false }
+        return savedItems.contains { $0.name == searchedItem.name}
+    }
+
 }
