@@ -13,8 +13,8 @@ final class Item {
     var name: String
     var createdAt: Date
     
-    init(name: String) {
+    init(_ name: String, createdAt: Date = Date()) {
         self.name = name
-        self.createdAt = Date()
+        self.createdAt = createdAt
     }
 }

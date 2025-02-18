@@ -27,8 +27,7 @@ struct SideBarListView: View {
                     if let item = viewModel.selectedItem {
                         Button("Delete") {
                             withAnimation {
-                                viewModel.delete(item: item)
-                                viewModel.selectedItem = nil
+                                viewModel.delete(item)
                             }
                         }
                     }
@@ -65,10 +64,7 @@ struct SideBarListView: View {
         withAnimation {
             for index in offsets {
                 let item = viewModel.savedItems[index]
-                if item == viewModel.selectedItem {
-                    viewModel.selectedItem = nil
-                }
-                viewModel.delete(item: item)
+                viewModel.delete(item)
             }
         }
     }
