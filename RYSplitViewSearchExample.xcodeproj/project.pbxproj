@@ -24,6 +24,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		9409A1B62D63F9F600A6265B /* RYSplitViewSearchExample.xctestplan */ = {isa = PBXFileReference; lastKnownFileType = text; path = RYSplitViewSearchExample.xctestplan; sourceTree = "<group>"; };
 		949259002D619CE700A20325 /* RYSplitViewSearchExample.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = RYSplitViewSearchExample.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		949259132D619CE800A20325 /* RYSplitViewSearchExampleTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = RYSplitViewSearchExampleTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		9492591D2D619CE800A20325 /* RYSplitViewSearchExampleUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = RYSplitViewSearchExampleUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -75,6 +76,7 @@
 		949258F72D619CE700A20325 = {
 			isa = PBXGroup;
 			children = (
+				9409A1B62D63F9F600A6265B /* RYSplitViewSearchExample.xctestplan */,
 				949259022D619CE700A20325 /* RYSplitViewSearchExample */,
 				949259162D619CE800A20325 /* RYSplitViewSearchExampleTests */,
 				949259202D619CE800A20325 /* RYSplitViewSearchExampleUITests */,

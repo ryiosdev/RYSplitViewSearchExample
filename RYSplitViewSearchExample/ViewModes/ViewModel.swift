@@ -59,6 +59,11 @@ class ViewModel {
     init(modelContext: ModelContext) {
         self.modelContext = modelContext
         fetchSavedData()
+#if os(iOS)
+        if let first = savedItems.first {
+            selectedItem = first
+        }
+#endif
     }
     
     private func fetchSavedData() {
@@ -73,11 +78,13 @@ class ViewModel {
     func add(item: Item) {
         modelContext.insert(item)
         fetchSavedData()
+        try? modelContext.save()
     }
     
     func delete(item: Item) {
         modelContext.delete(item)
         fetchSavedData()
+        try? modelContext.save()
     }
             
     func onSubmitOfSearch() {

@@ -39,18 +39,15 @@ struct SideBarListView: View {
             .navigationSplitViewColumnWidth(min: 180, ideal: 200)
 #endif
         }
-        .toolbar {
 #if os(iOS)
+        .toolbar {
             ToolbarItem(placement: .navigationBarTrailing) {
                 EditButton()
             }
-#endif
         }
         .onChange(of: viewModel.searchedItem, initial: true) { (oldValue, newValue) in
             if newValue != nil  {
-#if !os(macOS)
                 viewModel.isDetailSheetPresented = true
-#endif
             } else {
                 viewModel.isDetailSheetPresented = false
             }
@@ -61,6 +58,7 @@ struct SideBarListView: View {
                 viewModel.searchedItem = nil
             }
         }
+#endif
     }
     
     private func deleteItems(offsets: IndexSet) {

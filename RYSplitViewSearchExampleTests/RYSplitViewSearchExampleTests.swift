@@ -6,11 +6,26 @@
 //
 
 import Testing
+import Foundation
 
-struct RYSplitViewSearchExampleTests {
+@testable import RYSplitViewSearchExample
 
-    @Test func example() async throws {
-        // Write your test here and use APIs like `#expect(...)` to check expected conditions.
+struct ModelTests {
+    struct ItemTests {
+        @Test func initProperties() {
+            let item = Item(name: "Test")
+            #expect(item.name == "Test")
+            // Test if auto generated Date is close enough.
+            #expect(item.createdAt < Date.now.addingTimeInterval(10))
+            #expect(item.createdAt > Date.now.addingTimeInterval(-10))
+        }
     }
-
 }
+
+struct ViewModelTests {
+    // TODO: add more tests
+    @Test func example() {
+        #expect(true)
+    }
+}
+

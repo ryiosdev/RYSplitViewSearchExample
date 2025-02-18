@@ -1,0 +1,37 @@
+{
+  "configurations" : [
+    {
+      "id" : "F3AAAC61-71B9-4C77-BDA9-9EBF124773A2",
+      "name" : "Test Scheme Action",
+      "options" : {
+
+      }
+    }
+  ],
+  "defaultOptions" : {
+    "targetForVariableExpansion" : {
+      "containerPath" : "container:RYSplitViewSearchExample.xcodeproj",
+      "identifier" : "949258FF2D619CE700A20325",
+      "name" : "RYSplitViewSearchExample"
+    }
+  },
+  "testTargets" : [
+    {
+      "parallelizable" : true,
+      "target" : {
+        "containerPath" : "container:RYSplitViewSearchExample.xcodeproj",
+        "identifier" : "949259122D619CE800A20325",
+        "name" : "RYSplitViewSearchExampleTests"
+      }
+    },
+    {
+      "parallelizable" : true,
+      "target" : {
+        "containerPath" : "container:RYSplitViewSearchExample.xcodeproj",
+        "identifier" : "9492591C2D619CE800A20325",
+        "name" : "RYSplitViewSearchExampleUITests"
+      }
+    }
+  ],
+  "version" : 1
+}
