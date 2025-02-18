@@ -1,3 +1,4 @@
+[![iOS starter workflow](https://github.com/ryiosdev/RYSplitViewSearchExample/actions/workflows/ios.yml/badge.svg)](https://github.com/ryiosdev/RYSplitViewSearchExample/actions/workflows/ios.yml)
 # RYSplitViewSearchExample
 
 ## A sample SwiftUI MVVM app featuring a SplitView with search capabilities
