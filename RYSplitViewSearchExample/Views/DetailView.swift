@@ -9,9 +9,9 @@ import SwiftUI
 import SwiftData
 
 struct DetailView: View {
-    @Binding var viewModel: ViewModel
-
     @Environment(\.dismissSearch) private var dismissSearch
+    @Bindable var viewModel: ViewModel
+
     var body: some View {
         VStack {
             if let searched = viewModel.searchedItem {
@@ -23,7 +23,7 @@ struct DetailView: View {
                     if !viewModel.savedItems.contains(where: { $0.name.lowercased() == searched.name.lowercased() } ) {
                         Button("Add") {
                             withAnimation {
-                                viewModel.add(item: searched)
+                                viewModel.addDetail(item: searched)
                                 dismissSearch()
                             }
                         }

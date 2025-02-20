@@ -38,10 +38,11 @@ struct ModelTests {
 }
 
 
+@MainActor
 struct ViewModelTests {
     let config = ModelConfiguration(isStoredInMemoryOnly: true)
 
-    @MainActor
+    
     @Test func initProperties() throws {
         let container = try ModelContainer(for: Item.self, configurations: config)
         let viewModel = ViewModel(modelContext: container.mainContext)
@@ -49,12 +50,11 @@ struct ViewModelTests {
         #expect(viewModel.savedItems.count == 0)
     }
     
-    @MainActor
     @Test func addedItemIsSaved() throws {
         let container = try ModelContainer(for: Item.self, configurations: config)
         let viewModel = ViewModel(modelContext: container.mainContext)
         
-        viewModel.add(item: Item("Test"))
+        viewModel.addSheetDetail(item: Item("Test"))
         
         #expect(viewModel.savedItems.count == 1)
         #expect(viewModel.savedItems[0].name == "Test")

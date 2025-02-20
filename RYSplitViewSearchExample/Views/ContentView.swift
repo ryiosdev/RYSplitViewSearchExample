@@ -18,9 +18,9 @@ struct ContentView: View {
     
     var body: some View {
         NavigationSplitView {
-            SideBarListView(viewModel: $viewModel)
+            SideBarListView(viewModel: viewModel)
         } detail: {
-            DetailView(viewModel: $viewModel)
+            DetailView(viewModel: viewModel)
         }
 #if os(iOS)
         .searchable(text: $viewModel.searchText,
@@ -29,10 +29,13 @@ struct ContentView: View {
 #elseif os(macOS)
         .searchable(text: $viewModel.searchText,
                     isPresented: $viewModel.isSearchPresented,
-                    placement: .automatic )
+                    placement: .automatic)
 #endif
         .searchSuggestions {
-            SearchSuggestionsView(viewModel: viewModel)
+            ForEach(viewModel.searchedItemsByName) { item in
+                SearchSuggestionView(viewModel: viewModel, suggestedItem: item)
+                    .searchCompletion(viewModel.searchCompletionString(for: item))
+            }
         }
         .onSubmit(of: .search) {
             withAnimation {
@@ -41,3 +44,5 @@ struct ContentView: View {
         }
     }    
 }
+
+

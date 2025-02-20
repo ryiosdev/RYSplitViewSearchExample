@@ -26,7 +26,7 @@ class ViewModel {
     // if the search bar is selected/activated.
     var isSearchPresented: Bool = false
     
-    // Indicates if `searchedItem` search result is being displayed in a modal Sheet (iOS only)
+    // State to indicate `searchedItem`'s detail view should be presented as a modal sheet
     var isDetailSheetPresented: Bool = false
     
     // Used for Search results and Auto-complete search results of `Items` for the current `searchText` value
@@ -74,22 +74,49 @@ class ViewModel {
         }
     }
     
-    func add(item: Item, _ completion: (() -> Void)? = nil) {
-        
+    // MARK: Item CRUD (SwiftData)
+    private func add(item: Item) {
         modelContext.insert(item)
         try? modelContext.save()
-        fetchSavedItems()
-        completion?()
     }
     
-    func delete(_ item: Item) {
-        
-        modelContext.delete(item) // TODO: copy method and pass in index set
+    private func delete(item: Item) {
+        modelContext.delete(item)
         try? modelContext.save()
-        fetchSavedItems()
-        updateSelectedItemAfterDeleting(item)
     }
     
+    private func delete(offsets: IndexSet) {
+        let offsetIds = offsets.map { savedItems[$0].id }
+        try? modelContext.delete(model: Item.self, where: #Predicate {item in offsetIds.contains(item.id)})
+        try? modelContext.save()
+    }
+    
+    private func delete(ids: Set<Item.ID>) {
+        try? modelContext.delete(model: Item.self, where: #Predicate {item in ids.contains(item.id)})
+        try? modelContext.save()
+    }
+    
+    // MARK: SideBar Actions
+    func deleteSideBarItem(_ item: Item) {
+        delete(item: item)
+        fetchSavedItems()
+    }
+    
+    func deleteSideBarItems(at offsets: IndexSet) {
+        delete(offsets: offsets)
+        fetchSavedItems()
+    }
+    
+    func shouldShowDeleteButton(for ids: Set<Item.ID>) -> Bool {
+        ids.count > 0
+    }
+    
+    func deleteSideBarItems(ids: Set<Item.ID>) {
+        delete(ids: ids)
+        fetchSavedItems()
+    }
+    
+    //TODO: add this back into correct spot
     func updateSelectedItemAfterDeleting(_ item: Item) {
 #if os(macOS)
         let originalItemIndex = savedItems.firstIndex(of: item)
@@ -109,6 +136,7 @@ class ViewModel {
 #endif
     }
      
+    // MARK: Search Actions
     func searchCompletionString(for item: Item) -> String {
         searchText
     }
@@ -137,5 +165,16 @@ class ViewModel {
     func isSearchedItemAlreadySaved() -> Bool {
         guard let searchedItem else { return false }
         return savedItems.contains { $0.name == searchedItem.name}
+    }
+    
+    // MARK: Add Actions
+    func addSheetDetail(item: Item) {
+        add(item: item)
+        fetchSavedItems()
+    }
+    
+    func addDetail(item: Item) {
+        add(item: item)
+        fetchSavedItems()
     }
 }

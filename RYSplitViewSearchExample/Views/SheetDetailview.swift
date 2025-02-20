@@ -9,10 +9,10 @@ import SwiftUI
 import SwiftData
 
 struct SheetDetailView: View {
-    @Binding var viewModel: ViewModel
-    
     @Environment(\.dismiss) private var dismiss
     @Environment(\.dismissSearch) private var dismissSearch
+    @Bindable var viewModel: ViewModel
+    
     var body: some View {
         NavigationStack {
             if let searched = viewModel.searchedItem {
@@ -25,10 +25,9 @@ struct SheetDetailView: View {
                     if !viewModel.isSearchedItemAlreadySaved() {
                         Button("Add") {
                             withAnimation {
-                                viewModel.add(item: searched) {
-                                    dismiss()
-                                    dismissSearch()
-                                }
+                                viewModel.addSheetDetail(item: searched)
+                                dismiss()
+                                dismissSearch()
                             }
                         }
                     }
