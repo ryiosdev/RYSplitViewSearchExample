@@ -13,21 +13,17 @@ struct DetailView: View {
 
     @Environment(\.dismissSearch) private var dismissSearch
     var body: some View {
-        if let searched = viewModel.searchedItem {
-            VStack {
+        VStack {
+            if let searched = viewModel.searchedItem {
 #if os(macOS)
                 VStack {
                     Text("Search result item:")
                     Text(searched.name)
                     //if not already saved, show the Save button
                     if !viewModel.savedItems.contains(where: { $0.name.lowercased() == searched.name.lowercased() } ) {
-                        Button("Save") {
+                        Button("Add") {
                             withAnimation {
-                                //TODO: move to viewModel
                                 viewModel.add(item: searched)
-                                viewModel.selectedItem = searched
-                                viewModel.searchText = ""
-                                viewModel.searchedItem = nil
                                 dismissSearch()
                             }
                         }
@@ -36,15 +32,19 @@ struct DetailView: View {
                 .navigationTitle(searched.name)
 #endif
             }
-        } else if let selectedItem = viewModel.selectedItem {
-            VStack {
-                Text("Selected item:")
-                Text(selectedItem.name)
+            else if !viewModel.selectedItemIds.isEmpty {
+                if let firstId = viewModel.selectedItemIds.first,
+                    let selectedItem = viewModel.savedItems.first(where: { $0.id == firstId }) {
+                    VStack {
+                        Text("Selected item:")
+                        Text(selectedItem.name)
+                    }
+                    .navigationTitle(selectedItem.name)
+                }
+            } else {
+                Text("Select or Search for an item")
+                    .navigationBarBackButtonHidden(false)
             }
-            .navigationTitle(selectedItem.name)
-        } else {
-            Text("Select or Search for an item")
-                .navigationBarBackButtonHidden(false)
         }
     }
 }

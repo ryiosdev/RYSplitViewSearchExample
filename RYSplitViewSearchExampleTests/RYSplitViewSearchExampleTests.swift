@@ -14,24 +14,25 @@ import SwiftData
 struct ModelTests {
     struct ItemTests {
         @Test func initProperties() {
-            //Given: The current datetime
+            //Given: an initialized Item
+            let item = Item("Test")
+
+            
+            //When: the `savedAt` date is set
             let date = Date()
+            item.savedAt = date
             
-            //When: initializing an Item
-            let item = Item("Test", createdAt: date)
-            
-            //Then: The Item's properties should match what was passed into the `init` method.
+            //Then: The Item's correct properties should have changed.
             #expect(item.name == "Test")
-            #expect(item.createdAt == date)
+            #expect(item.savedAt == date)
         }
         
         @Test func initPropertiesWithDefaultDate() {
-            //Given: An item initialized without the `createdAt` date
+            //Given: An item initialized without the `savedAt` date
             let item = Item("Test")
                         
-            //Then: The `createdAt` date should be very close to `Date.now`. (depends on mili or micro seconds)
-            #expect(item.createdAt < Date.now.addingTimeInterval(0.5))
-            #expect(item.createdAt > Date.now.addingTimeInterval(-0.5))
+            //Then: The `savedAt` date should nil
+            #expect(item.savedAt == nil)
         }
     }
 }

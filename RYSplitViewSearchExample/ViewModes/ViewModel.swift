@@ -14,8 +14,8 @@ class ViewModel {
     // Saved items in SwiftData
     private(set) var savedItems = [Item]()
 
-    // An 'Item' from `savedItems` array that is selected and displayed in the details view, if `searchedItem` is not set.
-    var selectedItem: Item?
+    // 'Item.ID's from `savedItems` array that are selected, the first item is displayed in the details view, if `searchedItem` is not set.
+    var selectedItemIds = Set<Item.ID>()
     
     // The result of the user's`searchText` query
     var searchedItem: Item?
@@ -41,28 +41,13 @@ class ViewModel {
     // initial values to use for `searchableItems`
     private var initialSearchableItems: [Item] {
         get {
-            let names = ["Apple",
-                         "Banana",
-                         "Orange",
-                         "Mango",
-                         "Grape",
-                         "Watermelon",
-                         "Pineapple",
-                         "Strawberry",
-                         "Blueberry",
-                         "Raspberry",
-                         "Avocado",
-                         "Lemon",
-                         "Lime",
-                         "Cherry",
-                         "Kiwi",
-                         "Coconut",
-                         "Peach",
-                         "Pear",
-                         "Papaya",
-                         "Plum",
-                         "Apricot"]
-            return names.sorted().map { Item($0) }
+            let majorCities = [
+                "New York City", "Los Angeles", "Chicago", "Houston", "Phoenix",
+                "Philadelphia", "San Antonio", "San Diego", "Dallas", "San Jose",
+                "Austin", "Jacksonville", "Fort Worth", "Columbus", "Charlotte",
+                "Indianapolis", "San Francisco", "Seattle", "Denver", "Washington D.C."
+            ]
+            return majorCities.sorted().map { Item($0) }
         }
     }
     
@@ -75,69 +60,82 @@ class ViewModel {
         
 #if os(iOS)
         if let first = savedItems.first {
-            selectedItem = first
+            selectedItemIds = [first.id]
         }
 #endif
     }
     
     private func fetchSavedItems() {
         do {
-            let descriptor = FetchDescriptor<Item>(sortBy: [SortDescriptor(\.name)])
-            savedItems = try modelContext.fetch(descriptor).sorted{ $0.createdAt < $1.createdAt }
+            let descriptor = FetchDescriptor<Item>(sortBy: [SortDescriptor(\.savedAt)])
+            savedItems = try modelContext.fetch(descriptor)
         } catch {
             print("Fetch failed")
         }
     }
     
-    func add(item: Item) {
+    func add(item: Item, _ completion: (() -> Void)? = nil) {
+        
         modelContext.insert(item)
         try? modelContext.save()
         fetchSavedItems()
+        completion?()
     }
     
     func delete(_ item: Item) {
-        if let index = savedItems.firstIndex(of: item) {
-            modelContext.delete(item)
-            try? modelContext.save()
-            fetchSavedItems()
-            
-#if os(macOS)
-
-            //if there still is an item at this index, select it
-            if savedItems.indices.contains(index) {
-                selectedItem = savedItems[index]
-            // if not, and there is at least one item, select the first
-            } else if let first = savedItems.first {
-                selectedItem = first
-            // nothing is selectable
-            } else {
-                selectedItem = nil
-            }
-#endif
-        }
-    }
-            
-    func onSubmitOfSearch() {
-        //on submit (enter key), show the first searched suggestion, if it exist
-        let items = searchedItemsByName
-        print("submitted search text '\(searchText)' returned : \(items.map(\.name))")
-        showSearchResult(items.first)
+        
+        modelContext.delete(item) // TODO: copy method and pass in index set
+        try? modelContext.save()
+        fetchSavedItems()
+        updateSelectedItemAfterDeleting(item)
     }
     
-    private func showSearchResult(_ item: Item?) {
+    func updateSelectedItemAfterDeleting(_ item: Item) {
+#if os(macOS)
+        let originalItemIndex = savedItems.firstIndex(of: item)
+        
+        if let index = originalItemIndex {
+            //for macOS, if there still is an item at this index, select it
+            if savedItems.indices.contains(index) {
+                selectedItemIds = [savedItems[index].id]
+            // if not, and there is at least one item, select the first
+            } else if let first = savedItems.first {
+                selectedItemIds = [first.id]
+            // nothing is selectable
+            } else {
+                selectedItemIds = []
+            }
+        }
+#endif
+    }
+     
+    func searchCompletionString(for item: Item) -> String {
+        searchText
+    }
+    
+    func searchSuggestionTapped(for item: Item) {
+        searchedItem = item
+        isDetailSheetPresented = true
+    }
+    
+    func onSubmitOfSearch() {
+        //on submit (enter key), show the first searched suggestion, if it exist
+#if os(macOS)
+        let items = searchedItemsByName
+        print("submitted search text '\(searchText)' returned : \(items.map(\.name))")
+        showSearchResult(for: items.first)
+#endif
+    }
+    
+    private func showSearchResult(for item: Item?) {
         guard let item else { return }
         searchText = item.name // "auto-complete" search text
         isSearchPresented = false
         searchedItem = item
-#if os(macOS)
-        //deselect the macOS side bar if the searched item is ont already a saved item.
-        selectedItem = isSearchedItemAlreadySaved() ? selectedItem : nil
-#endif
     }
     
-    private func isSearchedItemAlreadySaved() -> Bool {
+    func isSearchedItemAlreadySaved() -> Bool {
         guard let searchedItem else { return false }
         return savedItems.contains { $0.name == searchedItem.name}
     }
-
 }

@@ -11,8 +11,8 @@ import SwiftData
 struct SheetDetailView: View {
     @Binding var viewModel: ViewModel
     
+    @Environment(\.dismiss) private var dismiss
     @Environment(\.dismissSearch) private var dismissSearch
-
     var body: some View {
         NavigationStack {
             if let searched = viewModel.searchedItem {
@@ -22,14 +22,13 @@ struct SheetDetailView: View {
                 }
                 .navigationTitle(searched.name)
                 .toolbar {
-                    // TODO: move to viewModel function of which button to show..
-                    if !viewModel.savedItems.contains(where: { $0.name.lowercased() == searched.name.lowercased() } ) {
-                        Button("Save") {
+                    if !viewModel.isSearchedItemAlreadySaved() {
+                        Button("Add") {
                             withAnimation {
-                                viewModel.add(item: searched)
-                                dismissSearch()
-                                viewModel.selectedItem = searched
-                                viewModel.isDetailSheetPresented = false
+                                viewModel.add(item: searched) {
+                                    dismiss()
+                                    dismissSearch()
+                                }
                             }
                         }
                     }

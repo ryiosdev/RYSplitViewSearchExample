@@ -22,14 +22,14 @@ struct ContentView: View {
         } detail: {
             DetailView(viewModel: $viewModel)
         }
-#if os(macOS)
-        .searchable(text: $viewModel.searchText,
-                    isPresented: $viewModel.isSearchPresented,
-                    placement: .automatic )
-#else
+#if os(iOS)
         .searchable(text: $viewModel.searchText,
                     isPresented: $viewModel.isSearchPresented,
                     placement: .navigationBarDrawer(displayMode:.always))
+#elseif os(macOS)
+        .searchable(text: $viewModel.searchText,
+                    isPresented: $viewModel.isSearchPresented,
+                    placement: .automatic )
 #endif
         .searchSuggestions {
             SearchSuggestionsView(viewModel: viewModel)

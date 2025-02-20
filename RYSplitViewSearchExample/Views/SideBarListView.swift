@@ -13,42 +13,28 @@ struct SideBarListView: View {
     @Binding var viewModel: ViewModel
     
     var body: some View {
-        VStack {
-            List(viewModel.savedItems, id: \.name, selection: $viewModel.selectedItem) { item in
-                // HACK .onDelete (swipe to delete) seems to only works on ForEach
-                ForEach([item]) { item in
-                    NavigationLink(item.name, value: item)
-                }
-                // Swipe to delete
-                .onDelete(perform: deleteItems)
-                // macOS right click delete
-#if os(macOS)
-                .contextMenu {
-                    if let item = viewModel.selectedItem {
-                        Button("Delete") {
-                            withAnimation {
-                                viewModel.delete(item)
-                            }
+        List(selection: $viewModel.selectedItemIds) {
+            ForEach(viewModel.savedItems) { item in
+                NavigationLink(item.name, value: item.id)
+                    .swipeActions(edge: .trailing) {
+                        Button(role: .destructive) {
+                            viewModel.delete(item)
+                        } label: {
+                            Label("Delete", systemImage: "trash")
                         }
                     }
-                }
-#endif
             }
-#if os(macOS)
-            .navigationSplitViewColumnWidth(min: 180, ideal: 200)
-#endif
+            // on iOS/iPadOS, Swipe to delete or Edit -> Delete buttons
+            .onDelete { indexSet in
+                withAnimation {
+                    deleteItems(offsets: indexSet)
+                }
+            }
         }
 #if os(iOS)
         .toolbar {
             ToolbarItem(placement: .navigationBarTrailing) {
                 EditButton()
-            }
-        }
-        .onChange(of: viewModel.searchedItem, initial: true) { (oldValue, newValue) in
-            if newValue != nil  {
-                viewModel.isDetailSheetPresented = true
-            } else {
-                viewModel.isDetailSheetPresented = false
             }
         }
         .sheet(isPresented: $viewModel.isDetailSheetPresented) {
@@ -57,11 +43,30 @@ struct SideBarListView: View {
                 viewModel.searchedItem = nil
             }
         }
+#elseif os(macOS)
+        // macOS right click delete
+        .contextMenu(forSelectionType: Item.ID.self) { ids in
+            // if at least one side bar row selected
+            if ids.count > 0 {
+                Button("Delete", role: .destructive) {
+                    withAnimation {
+                        // TODO: move to ViewModel
+                        print("context menu delete : \(ids)")
+                        let items = viewModel.savedItems.filter({ ids.contains($0.id) })
+                        items.forEach { item in
+                            viewModel.delete(item)
+                        }
+                    }
+                }
+            }
+        }
+        .navigationSplitViewColumnWidth(min: 180, ideal: 200)
 #endif
     }
     
     private func deleteItems(offsets: IndexSet) {
         withAnimation {
+            // TODO: move to viewModel
             for index in offsets {
                 let item = viewModel.savedItems[index]
                 viewModel.delete(item)

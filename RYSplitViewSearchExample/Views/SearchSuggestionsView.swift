@@ -16,7 +16,10 @@ struct SearchSuggestionsView: View {
         print("suggesting: \(items.map(\.name))")
         return ForEach(items) { item in
             Text(item.name)
-            .searchCompletion(item.name)
+                .onTapGesture {
+                    viewModel.searchSuggestionTapped(for: item)
+                }
+                .searchCompletion(viewModel.searchCompletionString(for: item))
         }
     }
 }
