@@ -14,8 +14,7 @@ struct DetailView: View {
 
     var body: some View {
         VStack {
-            if let searched = viewModel.searchedItem {
-#if os(macOS)
+            if let searched = viewModel.searchedItem, !viewModel.isDetailSheetPresented {
                 VStack {
                     Text("Search result item:")
                     Text(searched.name)
@@ -23,24 +22,22 @@ struct DetailView: View {
                     if !viewModel.savedItems.contains(where: { $0.name.lowercased() == searched.name.lowercased() } ) {
                         Button("Add") {
                             withAnimation {
-                                viewModel.addDetail(item: searched)
+                                viewModel.addToSavedItems(item: searched)
                                 dismissSearch()
                             }
                         }
                     }
                 }
-                .navigationTitle(searched.name)
-#endif
             }
-            else if !viewModel.selectedItemIds.isEmpty {
-                if let firstId = viewModel.selectedItemIds.first,
-                    let selectedItem = viewModel.savedItems.first(where: { $0.id == firstId }) {
-                    VStack {
-                        Text("Selected item:")
-                        Text(selectedItem.name)
-                    }
-                    .navigationTitle(selectedItem.name)
+            else if let selectedItem = viewModel.firstSelectedItem() {
+                VStack {
+                    Text("Selected item:")
+                    Text(selectedItem.name)
+                    Text(selectedItem.savedAt?.description ?? "")
+                        .foregroundStyle(.secondary)
                 }
+                .navigationTitle(selectedItem.name)
+                
             } else {
                 Text("Select or Search for an item")
                     .navigationBarBackButtonHidden(false)

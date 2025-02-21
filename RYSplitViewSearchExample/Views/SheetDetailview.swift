@@ -25,7 +25,7 @@ struct SheetDetailView: View {
                     if !viewModel.isSearchedItemAlreadySaved() {
                         Button("Add") {
                             withAnimation {
-                                viewModel.addSheetDetail(item: searched)
+                                viewModel.addToSavedItems(item: searched)
                                 dismiss()
                                 dismissSearch()
                             }

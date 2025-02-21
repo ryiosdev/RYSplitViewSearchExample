@@ -34,11 +34,6 @@ struct SideBarListView: View {
             }
         }
 #if os(iOS)
-        .toolbar {
-            ToolbarItem(placement: .navigationBarTrailing) {
-                EditButton()
-            }
-        }
         .sheet(isPresented: $viewModel.isDetailSheetPresented) {
             SheetDetailView(viewModel: viewModel)
             .onDisappear {
