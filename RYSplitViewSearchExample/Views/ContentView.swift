@@ -22,10 +22,20 @@ struct ContentView: View {
         } detail: {
             DetailView(viewModel: viewModel)
         }
-        .searchable(text: $viewModel.searchText, isPresented: $viewModel.isSearchPresented)
+#if os(macOS)
+        .searchable(text: $viewModel.searchText,
+                    isPresented: $viewModel.isSearchPresented,
+                    placement: .automatic,
+                    prompt: "Search by City Name")
+#else
+        .searchable(text: $viewModel.searchText,
+                    isPresented: $viewModel.isSearchPresented,
+                    placement: .navigationBarDrawer(displayMode: .always),
+                    prompt: "Search by City Name")
+#endif
         .searchSuggestions {
             ForEach(viewModel.searchedItemsByName) { item in
-                SearchSuggestionView(suggestedItem: item)
+                ItemRowView(item: item)
                     .searchCompletion(viewModel.searchCompletionString(for: item))
             }
         }

@@ -10,12 +10,21 @@ import SwiftData
 
 struct SideBarListView: View {
     @Environment(\.modelContext) private var modelContext
+    
+    #if os(iOS)
+    @Environment(\.horizontalSizeClass) private var horizontalSizeClass
+    #endif
     @Bindable var viewModel: ViewModel
     
     var body: some View {
         List(selection: $viewModel.selectedItemIds) {
             ForEach(viewModel.savedItems) { item in
-                NavigationLink(item.name, value: item.id)
+                ItemRowView(item: item)
+                    .onTapGesture {
+                        print("tapped on \(item.name)")
+                        viewModel.selectedItemIds = [item.id]
+                        viewModel.searchedItem = nil
+                    }
                     .swipeActions(edge: .trailing) {
                         Button(role: .destructive) {
                             withAnimation {
@@ -26,20 +35,23 @@ struct SideBarListView: View {
                         }
                     }
             }
-            // on iOS/iPadOS, Swipe to delete or Edit -> Delete buttons
-            .onDelete { offsets in
-                withAnimation {
-                    viewModel.deleteSideBarItems(at: offsets)
-                }
-            }
+//            // on iOS/iPadOS, Swipe to delete or Edit -> Delete buttons
+//            .onDelete { offsets in
+//                withAnimation {
+//                    viewModel.deleteSideBarItems(at: offsets)
+//                }
+//            }
         }
+        .navigationTitle("SplitView Search")
 #if os(iOS)
-        .sheet(isPresented: $viewModel.isDetailSheetPresented) {
-            SheetDetailView(viewModel: viewModel)
-            .onDisappear {
-                viewModel.searchedItem = nil
+        .sheet(isPresented: $viewModel.isSheetDetailPresented,
+               onDismiss: {
+            withAnimation {
+                viewModel.onDismissOfSheetDetailView()
             }
-        }
+        }, content: {
+            SheetDetailView(viewModel: viewModel)
+        })
 #elseif os(macOS)
         // macOS right click delete
         .contextMenu(forSelectionType: Item.ID.self) { ids in

@@ -13,8 +13,8 @@ struct DetailView: View {
     @Bindable var viewModel: ViewModel
 
     var body: some View {
-        VStack {
-            if let searched = viewModel.searchedItem, !viewModel.isDetailSheetPresented {
+        ZStack {
+            if let searched = viewModel.searchedItem, !viewModel.isSheetDetailPresented {
                 VStack {
                     Text("Search result item:")
                     Text(searched.name)
@@ -33,10 +33,13 @@ struct DetailView: View {
                 VStack {
                     Text("Selected item:")
                     Text(selectedItem.name)
-                    Text(selectedItem.savedAt?.description ?? "")
+                    Text("Saved : \(selectedItem.savedAt?.description ?? "")")
                         .foregroundStyle(.secondary)
                 }
                 .navigationTitle(selectedItem.name)
+#if os(iOS)
+                .navigationBarTitleDisplayMode(.large)
+#endif
                 
             } else {
                 Text("Select or Search for an item")

@@ -27,7 +27,7 @@ class ViewModel {
     var isSearchPresented: Bool = false
     
     // State to indicate `searchedItem`'s detail view should be presented as a modal sheet
-    var isDetailSheetPresented: Bool = false
+    var isSheetDetailPresented: Bool = false
     
     // Used for Search results and Auto-complete search results of `Items` for the current `searchText` value
     // Case-insensitive search if `searchText` text is contianed within the `name` property of `searchableItems`
@@ -116,31 +116,52 @@ extension ViewModel {
         delete(ids: ids)
         fetchSavedItems()
     }
+    
+    //TODO: roll back delete helper method/logic for selecting the next item after delete completes.
 }
 
 // MARK: Search and Detail Actions
 extension ViewModel {
     func firstSelectedItem() -> Item? {
-        //TODO: gaurd if savedItem currently displayed..
         guard let firstSelectedItemId = selectedItemIds.first else { return nil }
         let item = savedItems.first(where: { $0.id == firstSelectedItemId })
         print("first selected item : \(item?.name ?? "")")
         return item
     }
 
+    // auto completes the `searchText` when user taps a `ItemRowView`
+    // NOTE: on macOS, this automatically trigers a `onSubmitOfSearch()` call
     func searchCompletionString(for item: Item) -> String {
         item.name
     }
     
     func onSubmitOfSearch() {
         print("on submit of search with text : '\(searchText)'")
+        // show the item details if the searchText is an exact match to one of the item's name
         if let item = searchableItems.first(where: { $0.name == searchText } ) {
-            selectedItemIds = []
-            searchedItem = item
-#if os(iOS)
-            isDetailSheetPresented = true
-#endif
+            showDetails(for: item)
+        } else {
+            // check for partial matches
+            let items = searchableItems.filter( { $0.name.lowercased().contains(searchText.lowercased()) } )
+            
+            // if partial match, auto complete to the first item in the list.
+            if items.count > 0 {
+                showDetails(for: items[0])
+            } else {
+                searchedItem = nil
+            }
         }
+#if os(iOS)
+        if searchedItem != nil {
+            isSheetDetailPresented = true
+        }
+#endif
+    }
+    
+    private func showDetails(for item: Item) {
+        print("Show Details for : '\(item.name)'")
+        searchedItem = item
+        selectedItemIds = []
     }
         
     func isSearchedItemAlreadySaved() -> Bool {
@@ -149,12 +170,22 @@ extension ViewModel {
     }
     
     func addToSavedItems(item: Item) {
+        print("Add to saved : '\(item.name)'")
         item.savedAt = Date()
         add(item: item)
         fetchSavedItems()
         isSearchPresented = false
+        searchedItem = nil
 #if os(iOS)
         searchText = ""
+        selectedItemIds = []
+#elseif os(macOS)
+        selectedItemIds = [item.id]
 #endif
+    }
+    
+    func onDismissOfSheetDetailView() {
+        print("Sheet Detail dissapeared.")
+        searchedItem = nil
     }
 }
