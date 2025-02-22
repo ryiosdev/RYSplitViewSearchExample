@@ -24,6 +24,5 @@ struct ItemRowView: View {
 
 #Preview {
     @Previewable @State var item = Item("Test")
-    
     ItemRowView(item: item)
 }

@@ -40,7 +40,6 @@ struct DetailView: View {
 #if os(iOS)
                 .navigationBarTitleDisplayMode(.large)
 #endif
-                
             } else {
                 Text("Select or Search for an item")
                     .navigationBarBackButtonHidden(false)
