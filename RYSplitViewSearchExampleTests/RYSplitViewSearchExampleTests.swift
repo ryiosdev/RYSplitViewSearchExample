@@ -13,26 +13,26 @@ import SwiftData
 
 struct ModelTests {
     struct ItemTests {
-        @Test func initProperties() {
-            //Given: an initialized Item
+        @Test func defaultInit() {
+            // Given: a new item
+            let item = Item("Test")
+            
+            // Then: the `name` should be the as given in the `init()` and `savedAt` == nil
+            #expect(item.name == "Test")
+            #expect(item.savedAt == nil)
+        }
+
+        @Test func setItemSavedAtData() {
+            // Given: an initialized Item
             let item = Item("Test")
 
-            
-            //When: the `savedAt` date is set
+            // When: the `savedAt` date is set
             let date = Date()
             item.savedAt = date
             
-            //Then: The Item's correct properties should have changed.
+            // Then: the date should match what was set
             #expect(item.name == "Test")
             #expect(item.savedAt == date)
-        }
-        
-        @Test func initPropertiesWithDefaultDate() {
-            //Given: An item initialized without the `savedAt` date
-            let item = Item("Test")
-                        
-            //Then: The `savedAt` date should nil
-            #expect(item.savedAt == nil)
         }
     }
 }
@@ -43,13 +43,20 @@ struct ViewModelTests {
     let config = ModelConfiguration(isStoredInMemoryOnly: true)
 
     @Test func initProperties() throws {
+        // Given: a new `ViewModel` with an empty
         let container = try ModelContainer(for: Item.self, configurations: config)
         let viewModel = ViewModel(modelContext: container.mainContext)
 
-        #expect(viewModel.savedItems.count == 0)
+        // Then: the default values should be as expected
+        #expect(viewModel.savedItems.isEmpty)
+        #expect(viewModel.selectedItemIds.isEmpty)
+        #expect(viewModel.searchedItem == nil)
+        #expect(viewModel.searchText == "")
+        #expect(viewModel.isSearchPresented == false)
     }
     
     @Test func addedItemIsSaved() throws {
+        // Given a new empty
         let container = try ModelContainer(for: Item.self, configurations: config)
         let viewModel = ViewModel(modelContext: container.mainContext)
         
