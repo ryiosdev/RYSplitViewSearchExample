@@ -4,6 +4,7 @@
 ## A sample SwiftUI MVVM app featuring a SplitView with search capabilities
 
 ### Features
+* Swift 6
 * SwiftUI using the `@Observable` macro
 * SwiftData storage
 * MVVM architecture
