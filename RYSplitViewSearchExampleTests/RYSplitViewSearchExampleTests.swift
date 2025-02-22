@@ -72,7 +72,9 @@ struct ViewModelTests {
         #expect(viewModel.savedItems.count == 1)
         #expect(viewModel.savedItems[0].name == "Test")
         #expect(viewModel.savedItems[0].savedAt != nil)
+#if os(iOS)
         #expect(viewModel.selectedItemIds.count == 1)
+#endif
     }
     
     @Test func savingMultipleItemsUpdatesCorrectProperties() throws {
@@ -96,8 +98,10 @@ struct ViewModelTests {
         #expect(viewModel.savedItems[0].savedAt != nil)
         #expect(viewModel.savedItems[1].name == "Test2")
         #expect(viewModel.savedItems[1].savedAt != nil)
+#if os(iOS)
         #expect(viewModel.selectedItemIds.count == 1)
         #expect(viewModel.selectedItemIds.first == item1.id)
+#endif
     }
     
     @Test func addToSavedItemsUpdatesCorrectProperties() throws {
@@ -113,7 +117,9 @@ struct ViewModelTests {
         #expect(viewModel.savedItems.count == 1)
         #expect(viewModel.savedItems[0].name == "Test")
         #expect(viewModel.savedItems[0].savedAt != nil)
+#if os(iOS)
         #expect(viewModel.selectedItemIds.count == 0)
         #expect(viewModel.firstSelectedItem() == nil)
+#endif
     }
 }

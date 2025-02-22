@@ -93,7 +93,19 @@ class ViewModel {
 
 // MARK: SideBar Actions
 extension ViewModel {
-    func deleteSideBarItem(_ item: Item) {
+    func sideBarItemsToDisplay() -> [Item] {
+#if os(iOS)
+        guard isSearchPresented == false else { return [] }
+#endif
+        return savedItems
+    }
+    
+    func tappedSideBar(item: Item) {
+        selectedItemIds = [item.id]
+        searchedItem = nil
+    }
+    
+    func deleteSideBar(item: Item) {
         delete(item: item)
         fetchSavedItems()
     }

@@ -18,17 +18,15 @@ struct SideBarListView: View {
     
     var body: some View {
         List(selection: $viewModel.selectedItemIds) {
-            ForEach(itemsToShow()) { item in
+            ForEach(viewModel.sideBarItemsToDisplay()) { item in
                 ItemRowView(item: item)
                     .onTapGesture {
-                        print("tapped on \(item.name)")
-                        viewModel.selectedItemIds = [item.id]
-                        viewModel.searchedItem = nil
+                        viewModel.tappedSideBar(item: item)
                     }
                     .swipeActions(edge: .trailing) {
                         Button(role: .destructive) {
                             withAnimation {
-                                viewModel.deleteSideBarItem(item)
+                                viewModel.deleteSideBar(item: item)
                             }
                         } label: {
                             Label("Delete", systemImage: "trash")
@@ -60,12 +58,5 @@ struct SideBarListView: View {
         }
         .navigationSplitViewColumnWidth(min: 180, ideal: 200)
 #endif
-    }
-    
-    private func itemsToShow() -> [Item] {
-#if os(iOS)
-        guard viewModel.isSearchPresented == false else { return [] }
-#endif
-        return viewModel.savedItems
     }
 }
