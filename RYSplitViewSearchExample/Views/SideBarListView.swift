@@ -18,7 +18,7 @@ struct SideBarListView: View {
     
     var body: some View {
         List(selection: $viewModel.selectedItemIds) {
-            ForEach(viewModel.savedItems) { item in
+            ForEach(itemsToShow()) { item in
                 ItemRowView(item: item)
                     .onTapGesture {
                         print("tapped on \(item.name)")
@@ -35,12 +35,6 @@ struct SideBarListView: View {
                         }
                     }
             }
-//            // on iOS/iPadOS, Swipe to delete or Edit -> Delete buttons
-//            .onDelete { offsets in
-//                withAnimation {
-//                    viewModel.deleteSideBarItems(at: offsets)
-//                }
-//            }
         }
         .navigationTitle("SplitView Search")
 #if os(iOS)
@@ -66,5 +60,12 @@ struct SideBarListView: View {
         }
         .navigationSplitViewColumnWidth(min: 180, ideal: 200)
 #endif
+    }
+    
+    private func itemsToShow() -> [Item] {
+#if os(iOS)
+        guard viewModel.isSearchPresented == false else { return [] }
+#endif
+        return viewModel.savedItems
     }
 }

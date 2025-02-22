@@ -31,10 +31,12 @@ class ViewModel {
     
     // Used for Search results and Auto-complete search results of `Items` for the current `searchText` value
     // Case-insensitive search if `searchText` text is contianed within the `name` property of `searchableItems`
+    // also don't include previously saved items with 'savedAt' set
     var searchedItemsByName: [Item] {
-        searchableItems.filter { $0.name.lowercased().contains(searchText.lowercased()) }
+        searchableItems.filter { searchItem in
+            searchItem.name.lowercased().contains(searchText.lowercased())
+        }
     }
-    
     // The internal list of searchable Items
     private var searchableItems = [Item]()
     
@@ -57,7 +59,6 @@ class ViewModel {
         self.modelContext = modelContext
         fetchSavedItems()
         searchableItems = initialSearchableItems
-        
 #if os(iOS)
         if let first = savedItems.first {
             selectedItemIds = [first.id]
@@ -84,12 +85,6 @@ class ViewModel {
         try? modelContext.save()
     }
     
-    private func delete(offsets: IndexSet) {
-        let offsetIds = offsets.map { savedItems[$0].id }
-        try? modelContext.delete(model: Item.self, where: #Predicate {item in offsetIds.contains(item.id)})
-        try? modelContext.save()
-    }
-    
     private func delete(ids: Set<Item.ID>) {
         try? modelContext.delete(model: Item.self, where: #Predicate {item in ids.contains(item.id)})
         try? modelContext.save()
@@ -100,11 +95,6 @@ class ViewModel {
 extension ViewModel {
     func deleteSideBarItem(_ item: Item) {
         delete(item: item)
-        fetchSavedItems()
-    }
-    
-    func deleteSideBarItems(at offsets: IndexSet) {
-        delete(offsets: offsets)
         fetchSavedItems()
     }
     

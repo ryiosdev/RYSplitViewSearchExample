@@ -14,7 +14,7 @@ struct DetailView: View {
 
     var body: some View {
         ZStack {
-            if let searched = viewModel.searchedItem, !viewModel.isSheetDetailPresented {
+            if !viewModel.isSheetDetailPresented, let searched = viewModel.searchedItem {
                 VStack {
                     Text("Search result item:")
                     Text(searched.name)
