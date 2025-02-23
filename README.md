@@ -13,7 +13,7 @@ Basically follows the UX pattern of the Apple's Weather apps for iOS and macOS. 
 * Swift Testing unit tests
 
 ### Preview
-![![iPhone 16](./assets/image/iPhone16ProMaxPortrait.png)](./assets/video/iPhone16ProMaxPortrait.gif)
+<img src="./assets/video/iPhone16ProMaxPortrait.gif" width="146" height="318"/>
 
 ### Requires
 * Xcode 16.2
