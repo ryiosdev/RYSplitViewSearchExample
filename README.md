@@ -14,8 +14,10 @@ Basically follows the UX pattern of the Apple's Weather apps for iOS and macOS. 
 
 ### Preview
 <img src="./assets/video/iPhone16ProMaxPortrait.gif" width="146" height="318"/>
-<img src="./assets/video/iPad11Landscape.gif" width="800" height="551"/>
-<img src="./assets/video/macOS.gif" width="800" height="406"/>
+
+[iPad Sample](./assets/video/iPad11Landscape.gif)
+
+[macOS Sample](./assets/video/macOS.gif)
 
 ### Requires
 * Xcode 16.2
