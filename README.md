@@ -2,7 +2,7 @@
 # RYSplitViewSearchExample
 
 ## A Sample SwiftUI SplitView App using SwiftData
-Basically follows the UX pattern of the Apple's Weather apps for iOS and macOS. Uses root level `NavigationSplitView` with an MVVM architecture. Has a search bar with auto-complete and ability to save searched "Items" using SwiftData. 
+A very genric SplitView template Xcode project that basically follows Apple's Weather apps UX for iOS and macOS. Uses root level `NavigationSplitView` with an MVVM architecture. Has a search bar with auto-complete and ability to save searched "Items" using SwiftData. 
 
 ### Features
 * Swift 6
