@@ -1,7 +1,8 @@
 [![iOS Build and Test](https://github.com/ryiosdev/RYSplitViewSearchExample/actions/workflows/ios.yml/badge.svg)](https://github.com/ryiosdev/RYSplitViewSearchExample/actions/workflows/ios.yml)
 # RYSplitViewSearchExample
 
-## A sample SwiftUI MVVM app featuring a SplitView with search capabilities
+## A Sample SwiftUI SplitView App using SwiftData
+Basically follows the UX pattern of the Apple's Weather apps for iOS and macOS. Uses root level `NavigationSplitView` with an MVVM architecture. Has a search bar with auto-complete and ability to save searched "Items" using SwiftData. 
 
 ### Features
 * Swift 6
@@ -9,11 +10,12 @@
 * SwiftData storage
 * MVVM architecture
 * iOS, iPadOS, and macOS support
+* Swift Testing unit tests
 
 ### Requires
 * Xcode 16.2
-* min deployment target
-  * iOS 18.2
+* min deployment target:
+  * iOS/iPadOS 18.2
   * macOS 15.0 
 
 ### Credits
