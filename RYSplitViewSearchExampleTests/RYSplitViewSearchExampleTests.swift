@@ -50,10 +50,7 @@ struct ViewModelTests {
 
         // Then: the default values should be as expected
         #expect(viewModel.savedItems.isEmpty)
-        #expect(viewModel.selectedItemIds.isEmpty)
-        #expect(viewModel.searchedItem == nil)
         #expect(viewModel.searchText == "")
-        #expect(viewModel.isSearchPresented == false)
     }
     
     @Test func initWithSingleItemUpdatesCorrectProperties() throws {
@@ -72,9 +69,6 @@ struct ViewModelTests {
         #expect(viewModel.savedItems.count == 1)
         #expect(viewModel.savedItems[0].name == "Test")
         #expect(viewModel.savedItems[0].savedAt != nil)
-#if os(iOS)
-        #expect(viewModel.selectedItemIds.count == 1)
-#endif
     }
     
     @Test func savingMultipleItemsUpdatesCorrectProperties() throws {
@@ -98,28 +92,5 @@ struct ViewModelTests {
         #expect(viewModel.savedItems[0].savedAt != nil)
         #expect(viewModel.savedItems[1].name == "Test2")
         #expect(viewModel.savedItems[1].savedAt != nil)
-#if os(iOS)
-        #expect(viewModel.selectedItemIds.count == 1)
-        #expect(viewModel.selectedItemIds.first == item1.id)
-#endif
-    }
-    
-    @Test func addToSavedItemsUpdatesCorrectProperties() throws {
-        // Given: a new `ViewModel` with an empty context
-        let container = try ModelContainer(for: Item.self, configurations: config)
-        let viewModel = ViewModel(modelContext: container.mainContext)
-        
-        // When: addToSavedItems item into ViewModel
-        let item = Item("Test")
-        viewModel.addToSavedItems(item: item)
-        
-        // Then: the `ViewModel` properties should reflect the context's data
-        #expect(viewModel.savedItems.count == 1)
-        #expect(viewModel.savedItems[0].name == "Test")
-        #expect(viewModel.savedItems[0].savedAt != nil)
-#if os(iOS)
-        #expect(viewModel.selectedItemIds.count == 0)
-        #expect(viewModel.firstSelectedItem() == nil)
-#endif
-    }
+    }    
 }

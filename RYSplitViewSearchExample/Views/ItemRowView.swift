@@ -12,13 +12,7 @@ struct ItemRowView: View {
     let item: Item
     
     var body: some View {
-        VStack(alignment: .leading) {
-            Text(item.name)
-            if let date = item.savedAt {
-                Text("Saved: \(date, style: .date)")
-                    .foregroundStyle(.secondary)
-            }
-        }
+        Label(item.name, systemImage: "location.circle")
     }
 }
 

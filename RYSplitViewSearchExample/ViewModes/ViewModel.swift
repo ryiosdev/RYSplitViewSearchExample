@@ -15,53 +15,26 @@ class ViewModel {
     private(set) var savedItems = [Item]()
     
     // 'Item.ID's from `savedItems` array that are selected, the first item is displayed in the details view, if `searchedItem` is not set.
-    var selectedItemIds = Set<Item.ID>()
-    
-    // The result of the user's`searchText` query
-    var searchedItem: Item?
+    var selectedItem: Item?
     
     // The current search text entered by the user.
     var searchText: String = ""
     
-    // if the search bar is selected/activated.
-    var isSearchPresented: Bool = false
+    private let majorCities = ["New York City", "Los Angeles", "Chicago", "Houston", "Phoenix",
+                       "Philadelphia", "San Antonio", "San Diego", "Dallas", "San Jose",
+                       "Austin", "Jacksonville", "Fort Worth", "Columbus", "Charlotte",
+                       "Indianapolis", "San Francisco", "Seattle", "Denver", "Washington D.C."]
     
-    // State to indicate `searchedItem`'s detail view should be presented as a modal sheet
-    var isSheetDetailPresented: Bool = false
-    
-    // Used for Search results and Auto-complete search results of `Items` for the current `searchText` value
-    // Case-insensitive search if `searchText` text is contianed within the `name` property of `searchableItems`
-    // also don't include previously saved items with 'savedAt' set
-    var searchedItemsByName: [Item] {
-        searchableItems.filter { searchItem in
-            searchItem.name.lowercased().contains(searchText.lowercased())
-        }
-    }
-    // The internal list of searchable Items
-    private var searchableItems = [Item]()
-    
-    // initial values to use for `searchableItems`
-    private var initialSearchableItems: [Item] {
-        get {
-            let majorCities = [
-                "New York City", "Los Angeles", "Chicago", "Houston", "Phoenix",
-                "Philadelphia", "San Antonio", "San Diego", "Dallas", "San Jose",
-                "Austin", "Jacksonville", "Fort Worth", "Columbus", "Charlotte",
-                "Indianapolis", "San Francisco", "Seattle", "Denver", "Washington D.C."
-            ]
-            return majorCities.sorted().map { Item($0) }
-        }
-    }
+    private let searchedCitiesToItem = [String:Item]()
     
     private var modelContext: ModelContext
     
     init(modelContext: ModelContext) {
         self.modelContext = modelContext
         fetchSavedItems()
-        searchableItems = initialSearchableItems
 #if os(iOS)
         if let first = savedItems.first {
-            selectedItemIds = [first.id]
+            selectedItem = first
         }
 #endif
     }
@@ -71,7 +44,7 @@ class ViewModel {
             let descriptor = FetchDescriptor<Item>(sortBy: [SortDescriptor(\.savedAt)])
             savedItems = try modelContext.fetch(descriptor)
         } catch {
-            print("Fetch failed")
+            print("Fetch failed to get saved items")
         }
     }
     
@@ -92,19 +65,7 @@ class ViewModel {
 }
 
 // MARK: SideBar Actions
-extension ViewModel {
-    func sideBarItemsToDisplay() -> [Item] {
-#if os(iOS)
-        guard isSearchPresented == false else { return [] }
-#endif
-        return savedItems
-    }
-    
-    func tappedSideBar(item: Item) {
-        selectedItemIds = [item.id]
-        searchedItem = nil
-    }
-    
+extension ViewModel {    
     func deleteSideBar(item: Item) {
         delete(item: item)
         fetchSavedItems()
@@ -119,75 +80,63 @@ extension ViewModel {
         fetchSavedItems()
     }
     
+    func firstSelectedItem() -> Item? {
+        guard let selectedItem else { return nil }
+        let item = savedItems.first(where: { $0.id == selectedItem.id })
+        print("first selected item : `\(item?.name ?? "")`")
+        return item
+    }
+
     //TODO: roll back delete helper method/logic for selecting the next item after delete completes.
 }
 
 // MARK: Search and Detail Actions
 extension ViewModel {
-    func firstSelectedItem() -> Item? {
-        guard let firstSelectedItemId = selectedItemIds.first else { return nil }
-        let item = savedItems.first(where: { $0.id == firstSelectedItemId })
-        print("first selected item : \(item?.name ?? "")")
-        return item
-    }
-
-    // auto completes the `searchText` when user taps a `ItemRowView`
-    // NOTE: on macOS, this automatically trigers a `onSubmitOfSearch()` call
-    func searchCompletionString(for item: Item) -> String {
-        item.name
+    func suggestionsForCurrentSearch() -> [String] {
+        majorCities.filter { city in
+            city.lowercased().contains(searchText.lowercased())
+        }
     }
     
     func onSubmitOfSearch() {
+        guard !searchText.isEmpty else { return }
         print("on submit of search with text : '\(searchText)'")
-        // show the item details if the searchText is an exact match to one of the item's name
-        if let item = searchableItems.first(where: { $0.name == searchText } ) {
-            showDetails(for: item)
-        } else {
-            // check for partial matches
-            let items = searchableItems.filter( { $0.name.lowercased().contains(searchText.lowercased()) } )
-            
-            // if partial match, auto complete to the first item in the list.
-            if items.count > 0 {
-                showDetails(for: items[0])
-            } else {
-                searchedItem = nil
-            }
-        }
-#if os(iOS)
-        if searchedItem != nil {
-            isSheetDetailPresented = true
-        }
-#endif
-    }
-    
-    private func showDetails(for item: Item) {
-        print("Show Details for : '\(item.name)'")
-        searchedItem = item
-        selectedItemIds = []
-    }
         
-    func isSearchedItemAlreadySaved() -> Bool {
-        guard let searchedItem else { return false }
-        return savedItems.contains { $0.name == searchedItem.name}
+        // Check for exact match
+        if let city = majorCities.first(where: { $0 == searchText } ) {
+            print("-> exact match: \(city)")
+            selectedItem = itemExists(for: city) ?? Item(city)
+        } else {
+            selectedItem = savedItems.first
+        }
     }
     
-    func addToSavedItems(item: Item) {
-        print("Add to saved : '\(item.name)'")
-        item.savedAt = Date()
-        add(item: item)
+//    private func showDetails(for city: String?) {
+//        print("Show Details for : '\(city ?? "")'")
+//        if let city = city {
+//            
+//            itemForDetailView = Item(city)
+//            selectedItemIds = []
+//            searchText = ""
+//            
+//        } else {
+//            itemForDetailView = nil
+//        }
+//        
+//    }
+    
+    private func itemExists(for name: String) -> Item? {
+        if let existingItem = savedItems.first(where: { $0.name == name }) {
+            print("->     existing item: \(name) found, use it instead")
+            return existingItem
+        }
+        return nil
+    }
+    
+    func saveDetailItem() {
+        guard let selectedItem else { return }
+        selectedItem.savedAt = Date()
+        add(item: selectedItem)
         fetchSavedItems()
-        isSearchPresented = false
-        searchedItem = nil
-#if os(iOS)
-        searchText = ""
-        selectedItemIds = []
-#elseif os(macOS)
-        selectedItemIds = [item.id]
-#endif
-    }
-    
-    func onDismissOfSheetDetailView() {
-        print("Sheet Detail dissapeared.")
-        searchedItem = nil
     }
 }

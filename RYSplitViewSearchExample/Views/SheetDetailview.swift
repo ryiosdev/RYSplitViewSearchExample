@@ -15,17 +15,17 @@ struct SheetDetailView: View {
     
     var body: some View {
         NavigationStack {
-            if let searched = viewModel.searchedItem {
+            if let item = viewModel.selectedItem {
                 VStack {
-                    Text("Sheet search result item:")
-                    Text(searched.name)
+                    Text("Sheet detail item:")
+                    Text(item.name)
                 }
-                .navigationTitle(searched.name)
+                .navigationTitle(item.name)
                 .toolbar {
-                    if !viewModel.isSearchedItemAlreadySaved() {
+                    if item.savedAt == nil {
                         Button("Add") {
                             withAnimation {
-                                viewModel.addToSavedItems(item: searched)
+                                viewModel.saveDetailItem()
                                 dismiss()
                                 dismissSearch()
                             }

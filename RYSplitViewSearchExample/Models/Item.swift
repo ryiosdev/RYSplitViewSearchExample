@@ -10,12 +10,13 @@ import SwiftData
 
 @Model
 final class Item: Identifiable {
-    var id: UUID
+    var id: UUID = UUID()
+    var createdAt: Date = Date()
     var name: String
     var savedAt: Date?
     
-    init(_ name: String) {
-        self.id = UUID()
+    init(_ name: String, savedAt: Date? = nil) {
         self.name = name
+        self.savedAt = savedAt
     }
 }
