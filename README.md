@@ -30,4 +30,5 @@ built from sample code derived from:
 * https://www.swiftyplace.com/blog/swiftui-search-bar-best-practices-and-examples
 * https://www.hackingwithswift.com/quick-start/swiftdata/how-to-use-mvvm-to-separate-swiftdata-from-your-views
 * https://developer.apple.com/documentation/swiftui/migrating-from-the-observable-object-protocol-to-the-observable-macro
+
   
