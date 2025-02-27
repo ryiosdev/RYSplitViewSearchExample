@@ -26,6 +26,7 @@ class ViewModel {
     // if the search bar is selected/activated.
     var isSearchPresented: Bool = false
     
+    //TODO: this should be "view logic" not really viewModel logic.
     // State to indicate `searchedItem`'s detail view should be presented as a modal sheet
     var isSheetDetailPresented: Bool = false
     
@@ -81,12 +82,18 @@ class ViewModel {
     }
     
     private func delete(item: Item) {
+        item.savedAt = nil
         modelContext.delete(item)
         try? modelContext.save()
     }
     
     private func delete(ids: Set<Item.ID>) {
-        try? modelContext.delete(model: Item.self, where: #Predicate {item in ids.contains(item.id)})
+        for id in ids {
+            if let item = savedItems.first(where: { $0.id == id }) {
+                item.savedAt = nil
+                modelContext.delete(item)
+            }
+        }
         try? modelContext.save()
     }
 }
@@ -187,7 +194,7 @@ extension ViewModel {
     }
     
     func onDismissOfSheetDetailView() {
-        print("Sheet Detail dissapeared.")
+        print("Sheet Detail dissapeared. isSheetDetailPresented is at : \(isSheetDetailPresented)")
         searchedItem = nil
     }
 }

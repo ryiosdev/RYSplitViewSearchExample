@@ -10,7 +10,6 @@ import SwiftData
 
 struct SheetDetailView: View {
     @Environment(\.dismiss) private var dismiss
-    @Environment(\.dismissSearch) private var dismissSearch
     @Bindable var viewModel: ViewModel
     
     var body: some View {
@@ -27,7 +26,6 @@ struct SheetDetailView: View {
                             withAnimation {
                                 viewModel.addToSavedItems(item: searched)
                                 dismiss()
-                                dismissSearch()
                             }
                         }
                     }

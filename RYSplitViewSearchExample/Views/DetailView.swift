@@ -9,7 +9,6 @@ import SwiftUI
 import SwiftData
 
 struct DetailView: View {
-    @Environment(\.dismissSearch) private var dismissSearch
     @Bindable var viewModel: ViewModel
 
     var body: some View {
@@ -23,7 +22,6 @@ struct DetailView: View {
                         Button("Add") {
                             withAnimation {
                                 viewModel.addToSavedItems(item: searched)
-                                dismissSearch()
                             }
                         }
                     }
