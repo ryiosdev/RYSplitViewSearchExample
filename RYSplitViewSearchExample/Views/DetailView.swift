@@ -40,7 +40,6 @@ struct DetailView: View {
 #endif
             } else {
                 Text("Select or Search for an item")
-                    .navigationBarBackButtonHidden(false)
             }
         }
     }

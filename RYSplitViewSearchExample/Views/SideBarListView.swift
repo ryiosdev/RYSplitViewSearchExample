@@ -18,7 +18,7 @@ struct SideBarListView: View {
     
     var body: some View {
         List(selection: $viewModel.selectedItemIds) {
-            ForEach(viewModel.sideBarItemsToDisplay()) { item in
+            ForEach(viewModel.savedItems) { item in
                 ItemRowView(item: item)
                     .onTapGesture {
                         viewModel.tappedSideBar(item: item)

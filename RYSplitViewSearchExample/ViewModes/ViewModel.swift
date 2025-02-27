@@ -23,9 +23,6 @@ class ViewModel {
     // The current search text entered by the user.
     var searchText: String = ""
     
-    // if the search bar is selected/activated.
-    var isSearchPresented: Bool = false
-    
     //TODO: this should be "view logic" not really viewModel logic.
     // State to indicate `searchedItem`'s detail view should be presented as a modal sheet
     var isSheetDetailPresented: Bool = false
@@ -67,7 +64,7 @@ class ViewModel {
 #endif
     }
     
-    func fetchSavedItems() {
+    private func fetchSavedItems() {
         do {
             let descriptor = FetchDescriptor<Item>(sortBy: [SortDescriptor(\.savedAt)])
             savedItems = try modelContext.fetch(descriptor)
@@ -100,13 +97,6 @@ class ViewModel {
 
 // MARK: SideBar Actions
 extension ViewModel {
-    func sideBarItemsToDisplay() -> [Item] {
-#if os(iOS)
-        guard isSearchPresented == false else { return [] }
-#endif
-        return savedItems
-    }
-    
     func tappedSideBar(item: Item) {
         selectedItemIds = [item.id]
         searchedItem = nil
@@ -138,12 +128,6 @@ extension ViewModel {
         return item
     }
 
-    // auto completes the `searchText` when user taps a `ItemRowView`
-    // NOTE: on macOS, this automatically trigers a `onSubmitOfSearch()` call
-    func searchCompletionString(for item: Item) -> String {
-        item.name
-    }
-    
     func onSubmitOfSearch() {
         print("on submit of search with text : '\(searchText)'")
         // show the item details if the searchText is an exact match to one of the item's name
@@ -183,7 +167,6 @@ extension ViewModel {
         item.savedAt = Date()
         add(item: item)
         fetchSavedItems()
-        isSearchPresented = false
         searchedItem = nil
 #if os(iOS)
         searchText = ""
@@ -194,7 +177,7 @@ extension ViewModel {
     }
     
     func onDismissOfSheetDetailView() {
-        print("Sheet Detail dissapeared. isSheetDetailPresented is at : \(isSheetDetailPresented)")
         searchedItem = nil
+        selectedItemIds = []
     }
 }

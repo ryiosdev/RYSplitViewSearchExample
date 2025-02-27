@@ -17,26 +17,24 @@ struct ContentView: View {
       }
     
     var body: some View {
-        NavigationSplitView {
+        NavigationSplitView(columnVisibility: .constant(.all), preferredCompactColumn: .constant(.sidebar)){
             SideBarListView(viewModel: viewModel)
         } detail: {
             DetailView(viewModel: viewModel)
         }
 #if os(macOS)
         .searchable(text: $viewModel.searchText,
-                    isPresented: $viewModel.isSearchPresented,
                     placement: .automatic,
                     prompt: "Search by City Name")
 #else
         .searchable(text: $viewModel.searchText,
-                    isPresented: $viewModel.isSearchPresented,
                     placement: .navigationBarDrawer(displayMode: .always),
                     prompt: "Search by City Name")
 #endif
         .searchSuggestions {
             ForEach(viewModel.searchedItemsByName) { item in
                 ItemRowView(item: item)
-                    .searchCompletion(viewModel.searchCompletionString(for: item))
+                    .searchCompletion(item.name)
             }
         }
         .onSubmit(of: .search) {
