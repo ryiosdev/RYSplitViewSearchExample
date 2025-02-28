@@ -6,7 +6,7 @@ A very genric SplitView template Xcode project that basically follows Apple's We
 
 ### Features
 * Swift 6
-* SwiftUI using the `@Observable` macro
+* SwiftUI using `#Preview` and `@Observable` macros
 * SwiftData storage
 * MVVM architecture
 * iOS, iPadOS, and macOS support
