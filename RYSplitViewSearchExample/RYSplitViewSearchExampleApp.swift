@@ -10,7 +10,7 @@ import SwiftData
 
 @main
 struct RYSplitViewSearchExampleApp: App {
-    var sharedModelContainer: ModelContainer = {
+    static let sharedModelContainer: ModelContainer = {
         
 //        let urlApp = FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask).last
 //        let url = urlApp!.appendingPathComponent("default.store")
@@ -31,11 +31,13 @@ struct RYSplitViewSearchExampleApp: App {
             fatalError("Could not create ModelContainer: \(error)")
         }
     }()
+    
+    @State var sharedViewModel = ViewModel(modelContext: RYSplitViewSearchExampleApp.sharedModelContainer.mainContext)
 
     var body: some Scene {
         WindowGroup {
-            ContentView(modelContext: sharedModelContainer.mainContext)
+            ContentView(viewModel: sharedViewModel)
         }
-        .modelContainer(sharedModelContainer)
+        .modelContainer(RYSplitViewSearchExampleApp.sharedModelContainer)
     }
 }

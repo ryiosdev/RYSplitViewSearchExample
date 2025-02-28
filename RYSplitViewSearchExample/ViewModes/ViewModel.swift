@@ -39,7 +39,7 @@ class ViewModel {
     private var searchableItems = [Item]()
     
     // initial values to use for `searchableItems`
-    private var initialSearchableItems: [Item] {
+    private static var initialSearchableItems: [Item] {
         get {
             let majorCities = [
                 "New York City", "Los Angeles", "Chicago", "Houston", "Phoenix",
@@ -53,10 +53,10 @@ class ViewModel {
     
     private var modelContext: ModelContext
     
-    init(modelContext: ModelContext) {
+    init(modelContext: ModelContext, searchableItems: [Item] = initialSearchableItems) {
         self.modelContext = modelContext
         fetchSavedItems()
-        searchableItems = initialSearchableItems
+        self.searchableItems = searchableItems
 #if os(iOS)
         if let first = savedItems.first {
             selectedItemIds = [first.id]

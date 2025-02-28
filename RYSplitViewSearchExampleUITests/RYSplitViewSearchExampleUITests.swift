@@ -23,13 +23,15 @@ final class RYSplitViewSearchExampleUITests: XCTestCase {
     }
 
     @MainActor
-    func testExample() throws {
+    func test() throws {
         // UI tests must launch the application that they test.
         let app = XCUIApplication()
         app.launch()
 
+        XCTAssertEqual(app.cells.count, 0, "There should be 0 items for firsrt launch")
         // Use XCTAssert and related functions to verify your tests produce the correct results.
     }
+
 
     @MainActor
     func testLaunchPerformance() throws {

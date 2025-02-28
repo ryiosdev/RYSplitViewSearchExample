@@ -9,8 +9,6 @@ import SwiftUI
 import SwiftData
 
 struct SideBarListView: View {
-    @Environment(\.modelContext) private var modelContext
-    
     #if os(iOS)
     @Environment(\.horizontalSizeClass) private var horizontalSizeClass
     #endif
@@ -36,6 +34,7 @@ struct SideBarListView: View {
         }
         .navigationTitle("SplitView Search")
 #if os(iOS)
+        // TODO: maybe it makes more sense to put this in DetailView or ContainerView 
         .sheet(isPresented: $viewModel.isSheetDetailPresented,
                onDismiss: {
             withAnimation {
@@ -59,4 +58,8 @@ struct SideBarListView: View {
         .navigationSplitViewColumnWidth(min: 180, ideal: 200)
 #endif
     }
+}
+
+#Preview("Sidebar View") {
+    SideBarListView(viewModel: ViewModelPreviewData.sharedViewModel)
 }

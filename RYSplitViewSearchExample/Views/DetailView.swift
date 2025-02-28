@@ -44,3 +44,27 @@ struct DetailView: View {
         }
     }
 }
+
+// MARK: Preview
+@MainActor
+class DetailPreviewData {
+    static let selectedItemViewModel: ViewModel = {
+        var viewModel = ViewModel(modelContext: ViewModelPreviewData.sharedModelContainer.mainContext)
+        viewModel.selectedItemIds = [viewModel.savedItems.first!.id]
+        return viewModel
+    }()
+    
+    static let searchedItemViewModel: ViewModel = {
+        var viewModel = ViewModel(modelContext: ViewModelPreviewData.sharedModelContainer.mainContext)
+        viewModel.searchedItem = Item("New City")
+        return viewModel
+    }()
+}
+
+#Preview("Selected Item Detail") {
+    DetailView(viewModel: DetailPreviewData.selectedItemViewModel)
+}
+
+#Preview("Searched Item Detail") {
+    DetailView(viewModel: DetailPreviewData.searchedItemViewModel)
+}

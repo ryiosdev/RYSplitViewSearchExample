@@ -34,3 +34,7 @@ struct SheetDetailView: View {
         }
     }
 }
+
+#Preview("Searched Item Detail" ) {
+    SheetDetailView(viewModel: DetailPreviewData.searchedItemViewModel)
+}
