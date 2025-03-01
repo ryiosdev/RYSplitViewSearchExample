@@ -9,6 +9,11 @@
     }
   ],
   "defaultOptions" : {
+    "commandLineArgumentEntries" : [
+      {
+        "argument" : "debug_store_data_in_mem_only"
+      }
+    ],
     "targetForVariableExpansion" : {
       "containerPath" : "container:RYSplitViewSearchExample.xcodeproj",
       "identifier" : "949258FF2D619CE700A20325",

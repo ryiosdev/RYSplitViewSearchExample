@@ -23,22 +23,22 @@ final class RYSplitViewSearchExampleUITests: XCTestCase {
     }
 
     @MainActor
-    func test() throws {
-        // UI tests must launch the application that they test.
+    func testAppStartsEmpty() throws {
         let app = XCUIApplication()
+        app.launchArguments = ["debug_store_data_in_mem_only"]
         app.launch()
 
         XCTAssertEqual(app.cells.count, 0, "There should be 0 items for firsrt launch")
-        // Use XCTAssert and related functions to verify your tests produce the correct results.
     }
-
 
     @MainActor
     func testLaunchPerformance() throws {
         if #available(macOS 10.15, iOS 13.0, tvOS 13.0, watchOS 7.0, *) {
             // This measures how long it takes to launch your application.
             measure(metrics: [XCTApplicationLaunchMetric()]) {
-                XCUIApplication().launch()
+                let app = XCUIApplication()
+                app.launchArguments = ["debug_store_data_in_mem_only"]
+                app.launch()
             }
         }
     }

@@ -20,6 +20,7 @@ final class RYSplitViewSearchExampleUITestsLaunchTests: XCTestCase {
     @MainActor
     func testLaunch() throws {
         let app = XCUIApplication()
+        app.launchArguments = ["debug_store_data_in_mem_only"]
         app.launch()
 
         // Insert steps here to perform after app launch but before taking a screenshot,

@@ -21,6 +21,13 @@ struct RYSplitViewSearchExampleApp: App {
         let schema = Schema([
             Item.self,
         ])
+        var inMemory = false
+#if DEBUG
+        //if within the preview or unit tests, use in mem storage
+        if CommandLine.arguments.contains("debug_store_data_in_mem_only") {
+            inMemory = true
+        }
+#endif        
         let modelConfiguration = ModelConfiguration(schema: schema, isStoredInMemoryOnly: false)
 
         do {
