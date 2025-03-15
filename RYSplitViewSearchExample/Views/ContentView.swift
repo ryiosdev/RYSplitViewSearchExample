@@ -40,10 +40,6 @@ struct ContentView: View {
     }
 }
 
-
-
-
-
 #Preview("Content View") {
     ContentView(viewModel: ViewModelPreviewData.sharedViewModel)
 }
