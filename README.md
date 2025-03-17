@@ -1,4 +1,3 @@
-# [![iOS Build and Test](https://github.com/ryiosdev/RYSplitViewSearchExample/actions/workflows/ios.yml/badge.svg)](https://github.com/ryiosdev/RYSplitViewSearchExample/actions/workflows/ios.yml)
 # RYSplitViewSearchExample
 
 ## A Sample SwiftUI SplitView App using SwiftData
