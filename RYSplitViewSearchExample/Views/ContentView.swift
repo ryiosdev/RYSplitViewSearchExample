@@ -9,37 +9,86 @@ import SwiftUI
 import SwiftData
 
 struct ContentView: View {
-    @Bindable var viewModel: ViewModel
+    @Environment(\.modelContext) var modelContext
+    @State private var selectedItem: Item?
+    @State private var searchViewModel = SearchViewModel()
     
     var body: some View {
-        NavigationSplitView(columnVisibility: .constant(.all), preferredCompactColumn: .constant(.sidebar)){
-            SideBarListView(viewModel: viewModel)
+        NavigationSplitView {
+            NavigationStack {
+                ListView(selectedItem: $selectedItem)
+            }
         } detail: {
-            DetailView(viewModel: viewModel)
+            NavigationStack {
+                Text("Detail view nav stack item for : \(selectedItem?.name ?? "")")
+                ItemDetailView(item: $selectedItem)
+                    .itemDidSave { item in
+                        print("ContentView's saved item closure for \(item.name)")
+                    }
+                    .itemDidDelete { item in
+                        print("ContentView's deleted item closure for \(item.name)")
+                    }
+            }
         }
-#if os(macOS)
-        .searchable(text: $viewModel.searchText,
+        .searchable(text: $searchViewModel.searchText,
                     placement: .automatic,
                     prompt: "Search by City Name")
-#else
-        .searchable(text: $viewModel.searchText,
-                    placement: .navigationBarDrawer(displayMode: .always),
-                    prompt: "Search by City Name")
-#endif
         .searchSuggestions {
-            ForEach(viewModel.searchedItemsByName) { item in
-                ItemRowView(item: item)
-                    .searchCompletion(item.name)
-            }
+            searchSuggestions()
         }
         .onSubmit(of: .search) {
-            withAnimation {
-                viewModel.onSubmitOfSearch()
+            if let item = searchViewModel.searchSubmitAction() {
+                print("search item to present or navigate to : \(item.name)")
+                // setting `selectedItem` pushes the it onto the NavigationSplitView's proper nav stack automagically.
+                selectedItem = item
             }
         }
+        .overlay(alignment: .bottom) {
+            debugView()
+        }
+    }
+    
+    @ViewBuilder
+    private func searchSuggestions() -> some View {
+        if case .searchingNotStarted = searchViewModel.searchViewState {
+            EmptyView()
+        } else if case let .searchingWithSuggestions(results) = searchViewModel.searchViewState {
+            ForEach(results, id:\.self) { result in
+                Text(formattedSearchSuggestion(result))
+                    .searchCompletion(result.autoCompleteText)
+            }
+        } else if case .searchingNotFound = searchViewModel.searchViewState {
+            Text("\"\(searchViewModel.searchText)\" not found")
+                .font(.caption)
+        } else if case let .error(errorMessage) = searchViewModel.searchViewState {
+            Text("Error : \(errorMessage)")
+                .font(.caption)
+        }
+    }
+    
+    private func formattedSearchSuggestion(_ result: ItemSearchResult) -> AttributedString {
+        var attributedString = AttributedString(result.autoCompleteText)
+        attributedString.foregroundColor = .label
+        
+        if let range = attributedString.range(of: searchViewModel.searchText,
+                                              options: [.caseInsensitive]) {
+            attributedString[range].foregroundColor = .accent
+            return attributedString
+        } else {
+            return attributedString
+        }
+    }
+    
+    @ViewBuilder
+    private func debugView() -> some View {
+        VStack(alignment: .leading, spacing: 4) {
+            Text("selectedItem = \(selectedItem?.name ?? "")")
+        }
+        .font(.caption)
     }
 }
 
 #Preview("Content View") {
-    ContentView(viewModel: ViewModelPreviewData.sharedViewModel)
+    ContentView()
+        .modelContainer(for: Item.self, inMemory: true)
 }

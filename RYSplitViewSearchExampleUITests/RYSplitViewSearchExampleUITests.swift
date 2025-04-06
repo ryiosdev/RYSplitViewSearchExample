@@ -28,7 +28,7 @@ final class RYSplitViewSearchExampleUITests: XCTestCase {
         app.launchArguments = ["debug_store_data_in_mem_only"]
         app.launch()
 
-        XCTAssertEqual(app.cells.count, 0, "There should be 0 items for firsrt launch")
+        XCTAssertEqual(app.cells.count, 0, "There should be 0 items for first launch")
     }
 
     @MainActor

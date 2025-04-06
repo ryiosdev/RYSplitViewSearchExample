@@ -28,7 +28,7 @@ struct RYSplitViewSearchExampleApp: App {
             inMemory = true
         }
 #endif        
-        let modelConfiguration = ModelConfiguration(schema: schema, isStoredInMemoryOnly: false)
+        let modelConfiguration = ModelConfiguration(schema: schema, isStoredInMemoryOnly: inMemory)
 
         do {
             let container = try ModelContainer(for: schema, configurations: [modelConfiguration])
@@ -39,11 +39,9 @@ struct RYSplitViewSearchExampleApp: App {
         }
     }()
     
-    @State var sharedViewModel = ViewModel(modelContext: RYSplitViewSearchExampleApp.sharedModelContainer.mainContext)
-
     var body: some Scene {
         WindowGroup {
-            ContentView(viewModel: sharedViewModel)
+            ContentView()
         }
         .modelContainer(RYSplitViewSearchExampleApp.sharedModelContainer)
     }
