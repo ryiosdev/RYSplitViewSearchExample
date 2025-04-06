@@ -20,7 +20,6 @@ struct ContentView: View {
             }
         } detail: {
             NavigationStack {
-                Text("Detail view nav stack item for : \(selectedItem?.name ?? "")")
                 ItemDetailView(item: $selectedItem)
                     .itemDidSave { item in
                         print("ContentView's saved item closure for \(item.name)")

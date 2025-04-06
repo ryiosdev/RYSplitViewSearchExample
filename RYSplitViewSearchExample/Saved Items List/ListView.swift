@@ -12,12 +12,16 @@ struct ListView: View {
     @Environment(\.modelContext) private var modelContext
     @Binding var selectedItem: Item?
 
+    private var didSavePublisher: NotificationCenter.Publisher {
+        NotificationCenter.default
+            .publisher(for: ModelContext.didSave, object: modelContext)
+    }
+    
     init(selectedItem: Binding<Item?>) {
         _selectedItem = selectedItem
     }
     
     var body: some View {
-        //since `modelContext` being referenced within `body`, I believe it auto triggers `viewModel` state changes on SwiftData changes.
         @State var viewModel = ListViewModel(modelContext: modelContext)
 
         List(selection: $selectedItem) {
@@ -36,6 +40,9 @@ struct ListView: View {
             }
         }
         .refreshable {
+            viewModel.refreshItemsList()
+        }
+        .onReceive(didSavePublisher) { _ in
             viewModel.refreshItemsList()
         }
         .overlay {

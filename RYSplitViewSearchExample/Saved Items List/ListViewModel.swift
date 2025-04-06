@@ -30,7 +30,8 @@ class ListViewModel {
     func refreshItemsList() {
         listViewState = .loading
         do {
-            let descriptor = FetchDescriptor<Item>(sortBy: [SortDescriptor(\.savedAt)])
+            let descriptor = FetchDescriptor<Item>(predicate: #Predicate { $0.savedAt != nil },
+                                                   sortBy: [SortDescriptor(\.savedAt)])
             let items = try modelContext.fetch(descriptor)
             listViewState = .loaded(items)
         } catch {
